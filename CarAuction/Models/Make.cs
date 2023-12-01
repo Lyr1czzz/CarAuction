@@ -9,6 +9,6 @@ namespace CarAuction.Models
 
         public string Name { get; set; }
 
-        public ICollection<Model> Models { get; set; }
+        public int DisplayOrder { get; set; }
     }
 }

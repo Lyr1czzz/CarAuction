@@ -15,6 +15,6 @@ namespace CarAuction.Data
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Make> Makes { get; set; }
     }
 }

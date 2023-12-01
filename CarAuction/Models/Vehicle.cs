@@ -18,10 +18,6 @@ namespace CarAuction.Models
 
         public string ImageURL { get; set; }
 
-        public int MakeId { get; set; }
-
-        public Make Make { get; set; }
-
         public Vehicle_Condition_Type Vehicle_Condition_Type { get; set; }
 
         public Vehicle_Type Vehicle_Type { get; set; }
