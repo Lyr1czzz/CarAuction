@@ -1,0 +1,48 @@
+﻿@model IEnumerable<CarAuction.Models.Make>
+
+<div class="container p-3">
+    <div class="row pr-4">
+        <div class="col-8">
+            <h2 class="text-primary">Make List</h2>
+        </div>
+        <div class="col-6 text-right">
+            <a asp-controller="Make" asp-action="Create" class="btn btn-primary">
+                Create New Make
+            </a>
+        </div>
+    </div>
+
+    <br /><br />
+
+    @if(Model.Count() > 0)
+    {
+        <table class="table table-bordered table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>
+                        Make Name
+                    </th>
+                    <th>
+                        Display Order
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td width="50%">@item.Name</td>
+                        <td width="50%">@item.DisplayOrder</td>
+                        <td></td>
+                    </tr>  
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No Make</p>
+    }
+
+</div>

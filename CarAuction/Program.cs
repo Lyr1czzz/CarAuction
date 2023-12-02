@@ -1,5 +1,4 @@
 using CarAuction.Data;
-using CarAuction.Data.Services;
 using CarAuction.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Cors.Infrastructure;
@@ -22,7 +21,7 @@ namespace eTickets
             });
 
             //Services configuration
-            builder.Services.AddScoped<IVehicleService, VehicleService>();
+            //builder.Services.AddScoped<IVehicleService, VehicleService>();
 
             builder.Services.AddControllersWithViews();
 
