@@ -15,8 +15,8 @@ namespace CarAuction.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Model> objList = _db.Models;
-            return View(objList);
+            IEnumerable<Model> modelList = _db.Models;
+            return View(modelList);
         }
 
         //Get - Create
@@ -28,11 +28,15 @@ namespace CarAuction.Controllers
         //Post - Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Model obj)
+        public IActionResult Create(Model model)
         {
-            _db.Models.Add(obj);
-            _db.SaveChanges();
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                _db.Models.Add(model);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(model);
         }
     }
 }
