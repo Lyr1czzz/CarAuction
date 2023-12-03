@@ -68,5 +68,38 @@ namespace CarAuction.Controllers
             }
             return View(make);
         }
+
+        //Get - Delete
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var make = _db.Makes.Find(id);
+            if (make == null)
+            {
+                return NotFound();
+            }
+
+            return View(make);
+        }
+
+        //Post - Delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int? id)
+        {
+            var make = _db.Makes.Find(id);
+
+            if (make == null)
+            {
+                return NotFound();
+            }
+
+            _db.Makes.Remove(make);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }       
     }
 }
