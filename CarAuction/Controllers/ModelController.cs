@@ -38,5 +38,68 @@ namespace CarAuction.Controllers
             }
             return View(model);
         }
+
+        //Get - Edit
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var model = _db.Models.Find(id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+
+        //Post - Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Model model)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Models.Update(model);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(model);
+        }
+
+        //Get - Delete
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var model = _db.Models.Find(id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+
+        //Post - Delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int? id)
+        {
+            var model = _db.Models.Find(id);
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            _db.Models.Remove(model);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }
