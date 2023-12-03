@@ -1,13 +1,13 @@
-﻿@model IEnumerable<CarAuction.Models.Make>
+﻿@model IEnumerable<CarAuction.Models.Model>
 
 <div class="container p-3">
     <div class="row pt-4">
         <div class="col-6">
-            <h2 class="text-primary">Make List</h2>
+            <h2 class="text-primary">Model List</h2>
         </div>
         <div class="col-6 text-right">
-            <a asp-controller="Make" asp-action="Create" class="btn btn-primary">
-                Create New Make
+            <a asp-controller="Model" asp-action="Create" class="btn btn-primary">
+                Create New Model
             </a>
         </div>
     </div>
@@ -20,10 +20,7 @@
             <thead>
                 <tr>
                     <th>
-                        Make Name
-                    </th>
-                    <th>
-                        Display Order
+                        Model Name
                     </th>
                     <th></th>
                 </tr>
@@ -33,7 +30,6 @@
                 {
                     <tr>
                         <td width="50%">@item.Name</td>
-                        <td width="50%">@item.DisplayOrder</td>
                         <td></td>
                     </tr>  
                 }
@@ -42,7 +38,7 @@
     }
     else
     {
-        <p>No Make</p>
+        <p>No Model</p>
     }
 
 </div>
