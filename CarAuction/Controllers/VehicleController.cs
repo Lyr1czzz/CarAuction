@@ -19,7 +19,7 @@ namespace CarAuction.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Vehicle> vehicleList = _db.Vehicles;
+            var vehicleList = _db.Vehicles;
 
             foreach (var item in vehicleList)
             {
@@ -67,41 +67,33 @@ namespace CarAuction.Controllers
             }
         }
 
-        //Post - Upsert
+        //Post - Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Upsert(VehicleVM vehicleVM)
         {
             if (ModelState.IsValid)
             {
-                var files = HttpContext.Request.Form.Files;
-                string webRootPath = _webHostEnvironment.WebRootPath;
+                // Получаем выбранный объект Make из базы данных
+                Make selectedMake = _db.Makes.FirstOrDefault(m => m.Id == vehicleVM.Vehicle.MakeId);
 
-                if(vehicleVM.Vehicle.Id == 0)
+                if (selectedMake != null)
                 {
-                    //Creating
-                    string upload = webRootPath + WC.ImagePath; 
-                    string fileName = Guid.NewGuid().ToString();
-                    string extension = Path.GetExtension(files[0].FileName);
-
-                    using (var fileStream = new FileStream(Path.Combine(upload, fileName + extension), FileMode.Create))
-                    {
-                        files[0].CopyTo(fileStream);
-                    }
-
-                    vehicleVM.Vehicle.Image = fileName + extension;
+                    // Присваиваем выбранный объект Make в Vehicle
+                    vehicleVM.Vehicle.Make = selectedMake;
 
                     _db.Vehicles.Add(vehicleVM.Vehicle);
+                    _db.SaveChanges();
+                    return RedirectToAction("Index");
                 }
                 else
                 {
-                    //Updating
+                    ModelState.AddModelError("", "Недопустимый идентификатор MakeId.");
                 }
-
-                _db.SaveChanges();
-                return RedirectToAction("Index");
             }
-            return View();
+
+            // Если модель не прошла проверку, возвращаем представление с сообщениями об ошибках
+            return View(vehicleVM);
         }
 
         //Get - Delete

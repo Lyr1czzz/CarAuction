@@ -16,12 +16,12 @@ namespace CarAuction.Models
         [Range(1, int.MaxValue)]
         public double Price { get; set;}
 
-        public string Image { get; set;}
+        public string Image { get; set;} = String.Empty;
 
         [Display(Name= "Make Type")]
         public int MakeId { get; set; }
 
         [ForeignKey("MakeId")]
-        public virtual Make Make { get; set; }
+        public virtual Make? Make { get; set; }
     }
 }
