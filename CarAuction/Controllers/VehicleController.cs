@@ -19,7 +19,7 @@ namespace CarAuction.Controllers
 
         public IActionResult Index()
         {
-            var vehicleList = _db.Vehicles;
+            var vehicleList = _db.Vehicles.ToList();
 
             foreach (var item in vehicleList)
             {
@@ -32,15 +32,6 @@ namespace CarAuction.Controllers
         //Get - Upsert
         public IActionResult Upsert(int? id)
         {
-            //IEnumerable<SelectListItem> MakeDropDown = _db.Makes.Select(i => new SelectListItem
-            //{
-            //    Text = i.Name,
-            //    Value = i.Id.ToString(),
-            //});
-            ////ViewBag.MakeDropDown = MakeDropDown;
-            //ViewData["MakeDropDown"] = MakeDropDown;
-            //Vehicle vehicle = new Vehicle();
-
             VehicleVM vehicleVM = new VehicleVM()
             {
                 Vehicle = new Vehicle(),
@@ -70,25 +61,63 @@ namespace CarAuction.Controllers
         //Post - Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(VehicleVM vehicleVM)
+        public IActionResult Upsert([FromForm] VehicleVM vehicleVM, IFormFile uploadedFile)
         {
             if (ModelState.IsValid)
             {
-                // Получаем выбранный объект Make из базы данных
-                Make selectedMake = _db.Makes.FirstOrDefault(m => m.Id == vehicleVM.Vehicle.MakeId);
-
-                if (selectedMake != null)
+                if(vehicleVM.Vehicle.Id == 0) 
                 {
-                    // Присваиваем выбранный объект Make в Vehicle
-                    vehicleVM.Vehicle.Make = selectedMake;
 
-                    _db.Vehicles.Add(vehicleVM.Vehicle);
-                    _db.SaveChanges();
-                    return RedirectToAction("Index");
+                    if (uploadedFile != null)
+                    {
+                        // Creating
+                        string path = "/Files/" + uploadedFile.FileName;
+                        
+                        using (var fileStream = new FileStream(_webHostEnvironment.WebRootPath + path, FileMode.Create))
+                        {
+                            uploadedFile.CopyTo(fileStream);
+                        }
+
+                        Make selectedMake = _db.Makes.FirstOrDefault(m => m.Id == vehicleVM.Vehicle.MakeId);
+
+                        if (selectedMake != null)
+                        {
+                            vehicleVM.Vehicle.Make = selectedMake;
+                            vehicleVM.Vehicle.Path = "Files/" + uploadedFile.FileName;
+                            _db.Vehicles.Add(vehicleVM.Vehicle);
+                            _db.SaveChanges();
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "Недопустимый идентификатор MakeId.");
+                        }
+                    }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Недопустимый идентификатор MakeId.");
+                    // Updating
+                    var objFromDb = _db.Vehicles.FirstOrDefault(u => u.Id == vehicleVM.Vehicle.Id);
+                    if (uploadedFile is not null)
+                    {
+                        string path = "/Files/" + uploadedFile.FileName;
+
+                        var oldFile = Path.Combine(path, objFromDb.Path);
+
+                        if (System.IO.File.Exists(oldFile))
+                        {
+                            System.IO.File.Delete(oldFile);
+                        }
+
+                        using (var fileStream = new FileStream(_webHostEnvironment.WebRootPath + path, FileMode.Create))
+                        {
+                            uploadedFile.CopyTo(fileStream);
+                        }
+                        vehicleVM.Vehicle.Path = "Files/" + uploadedFile.FileName;
+
+                    }
+                    _db.SaveChanges();
+                    return RedirectToAction("Index");
                 }
             }
 

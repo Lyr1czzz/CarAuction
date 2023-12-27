@@ -16,7 +16,7 @@ namespace CarAuction.Models
         [Range(1, int.MaxValue)]
         public double Price { get; set;}
 
-        public string Image { get; set;} = String.Empty;
+        public string Path { get; set; } = string.Empty;
 
         [Display(Name= "Make Type")]
         public int MakeId { get; set; }
