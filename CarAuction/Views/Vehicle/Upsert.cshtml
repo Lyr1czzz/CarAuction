@@ -88,7 +88,10 @@
                 </div>
             </div>
             <div class="col-4 pt-4">
-                <img src="@Url.Content("../../"+@Model.Vehicle.Path)" width="100%" style="border-radius:5px; border:1px solid #bbb">
+                @if(Model.Vehicle.Id != 0)
+                {
+                    <img src="@Url.Content("../../"+@Model.Vehicle.Path)" width="100%" style="border-radius:5px; border:1px solid #bbb">
+                }
             </div>
         </div>
     </div>

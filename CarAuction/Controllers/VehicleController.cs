@@ -3,6 +3,7 @@ using CarAuction.Models;
 using CarAuction.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarAuction.Controllers
 {
@@ -61,7 +62,7 @@ namespace CarAuction.Controllers
         //Post - Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert([FromForm] VehicleVM vehicleVM, IFormFile uploadedFile)
+        public IActionResult Upsert([FromForm] VehicleVM vehicleVM, IFormFile? uploadedFile)
         {
             if (ModelState.IsValid)
             {
@@ -97,7 +98,7 @@ namespace CarAuction.Controllers
                 else
                 {
                     // Updating
-                    var objFromDb = _db.Vehicles.FirstOrDefault(u => u.Id == vehicleVM.Vehicle.Id);
+                    var objFromDb = _db.Vehicles.AsNoTracking().FirstOrDefault(u => u.Id == vehicleVM.Vehicle.Id);
                     if (uploadedFile is not null)
                     {
                         string path = "/Files/" + uploadedFile.FileName;
@@ -113,15 +114,25 @@ namespace CarAuction.Controllers
                         {
                             uploadedFile.CopyTo(fileStream);
                         }
-                        vehicleVM.Vehicle.Path = "Files/" + uploadedFile.FileName;
-
+                        vehicleVM.Vehicle.Path = path;
                     }
+                    else
+                    {
+                        vehicleVM.Vehicle.Path = objFromDb.Path;
+                    }
+                    _db.Vehicles.Update(vehicleVM.Vehicle);
                     _db.SaveChanges();
                     return RedirectToAction("Index");
                 }
             }
 
             // Если модель не прошла проверку, возвращаем представление с сообщениями об ошибках
+
+            vehicleVM.MakeSelectList = _db.Makes.Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString(),
+            });
             return View(vehicleVM);
         }
 
@@ -132,28 +143,37 @@ namespace CarAuction.Controllers
             {
                 return NotFound();
             }
-            var make = _db.Makes.Find(id);
-            if (make == null)
+
+            Vehicle vehicle = _db.Vehicles.Include(u=>u.Make).FirstOrDefault(u=>u.Id==id);
+            
+            if (vehicle == null)
             {
                 return NotFound();
             }
-
-            return View(make);
+            return View(vehicle);
         }
 
         //Post - Delete
-        [HttpPost]
+        [HttpPost,ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int? id)
         {
-            var make = _db.Makes.Find(id);
-
-            if (make == null)
+            var obj = _db.Vehicles.Find(id);
+            if(obj == null)
             {
                 return NotFound();
             }
 
-            _db.Makes.Remove(make);
+            string path = "/Files/";
+
+            var oldFile = Path.Combine(path, obj.Path);
+
+            if (System.IO.File.Exists(oldFile))
+            {
+                System.IO.File.Delete(oldFile);
+            }
+
+            _db.Vehicles.Remove(obj);
             _db.SaveChanges();
             return RedirectToAction("Index");
         }       
