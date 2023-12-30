@@ -20,12 +20,13 @@ namespace CarAuction.Controllers
 
         public IActionResult Index()
         {
-            var vehicleList = _db.Vehicles.ToList();
+            IEnumerable<Vehicle> vehicleList = _db.Vehicles.Include(u=>u.Make).Include(u=>u.Model);
 
-            foreach (var item in vehicleList)
-            {
-                item.Make = _db.Makes.FirstOrDefault(u => u.Id == item.MakeId);
-            }
+            //foreach (var item in vehicleList)
+            //{
+            //    //item.Make = _db.Makes.FirstOrDefault(u => u.Id == item.MakeId);
+            //    //item.Model = _db.Models.FirstOrDefault(u => u.Id == item.ModelId);
+            //}
 
             return View(vehicleList);
         }
@@ -37,6 +38,11 @@ namespace CarAuction.Controllers
             {
                 Vehicle = new Vehicle(),
                 MakeSelectList = _db.Makes.Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString(),
+                }),
+                ModelSelectList = _db.Models.Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString(),
@@ -133,6 +139,11 @@ namespace CarAuction.Controllers
                 Text = i.Name,
                 Value = i.Id.ToString(),
             });
+            vehicleVM.ModelSelectList = _db.Models.Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString(),
+            });
             return View(vehicleVM);
         }
 
@@ -144,7 +155,7 @@ namespace CarAuction.Controllers
                 return NotFound();
             }
 
-            Vehicle vehicle = _db.Vehicles.Include(u=>u.Make).FirstOrDefault(u=>u.Id==id);
+            Vehicle vehicle = _db.Vehicles.Include(u=>u.Make).Include(u=>u.Model).FirstOrDefault(u=>u.Id==id);
             
             if (vehicle == null)
             {

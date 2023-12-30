@@ -33,30 +33,25 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Vehicle" asp-action="Index">Vehicle</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Make" asp-action="Index">Make</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Model" asp-action="Index">Model</a>
+                       
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Content Management
+                            </a>
+                            <ul class="dropdown-menu">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Vehicle" asp-action="Index">Vehicle</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Make" asp-action="Index">Make</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Model" asp-action="Index">Model</a>
+
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
                         </li>
                     </ul>
                     <form class="form-inline my-2 my-lg-0 search-form" asp-controller="Movies" asp-action="Filter">
                         <input name="searchString" type="text" class="form-control search-input" placeholder="Search Inventory by Make, Model, VIN, and More.." aria-label="Recipient's username" aria-describedby="button-addon2">
                         <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="bi bi-search"></i></button>
                     </form>
-                    <div class="collapse navbar-collapse justify-content-end">
-                        <ul class="navbar-nav">
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </nav>

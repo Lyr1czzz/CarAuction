@@ -73,6 +73,9 @@ namespace CarAuction.Migrations
                     b.Property<int>("MakeId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ModelId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -88,6 +91,8 @@ namespace CarAuction.Migrations
 
                     b.HasIndex("MakeId");
 
+                    b.HasIndex("ModelId");
+
                     b.ToTable("Vehicles");
                 });
 
@@ -99,7 +104,15 @@ namespace CarAuction.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CarAuction.Models.Model", "Model")
+                        .WithMany()
+                        .HasForeignKey("ModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Make");
+
+                    b.Navigation("Model");
                 });
 #pragma warning restore 612, 618
         }

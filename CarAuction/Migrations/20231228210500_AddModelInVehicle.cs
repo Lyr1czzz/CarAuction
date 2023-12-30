@@ -5,7 +5,7 @@
 namespace CarAuction.Migrations
 {
     /// <inheritdoc />
-    public partial class pictureFix : Migration
+    public partial class AddModelInVehicle : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,7 +47,8 @@ namespace CarAuction.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
                     Path = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MakeId = table.Column<int>(type: "int", nullable: false)
+                    MakeId = table.Column<int>(type: "int", nullable: false),
+                    ModelId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,25 +59,36 @@ namespace CarAuction.Migrations
                         principalTable: "Makes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Vehicles_Models_ModelId",
+                        column: x => x.ModelId,
+                        principalTable: "Models",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vehicles_MakeId",
                 table: "Vehicles",
                 column: "MakeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vehicles_ModelId",
+                table: "Vehicles",
+                column: "ModelId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Models");
-
-            migrationBuilder.DropTable(
                 name: "Vehicles");
 
             migrationBuilder.DropTable(
                 name: "Makes");
+
+            migrationBuilder.DropTable(
+                name: "Models");
         }
     }
 }
