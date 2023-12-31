@@ -23,5 +23,15 @@ namespace CarAuction.Controllers
             };
             return View(homeVM);
         }
+
+        public IActionResult Details(int id)
+        {
+            DetailsVM detailsVM = new DetailsVM()
+            {
+                Vehicle = _db.Vehicles.Include(u=>u.Make).Include(u => u.Model).Where(u=>u.Id==id).FirstOrDefault(),
+                ExistsInCard = false,
+            };
+            return View(detailsVM);
+        }
     }
 }

@@ -36,6 +36,15 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-4">
+                        <label asp-for="Vehicle.Mileage"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="Vehicle.Mileage" class="form-control" />
+                        <span asp-validation-for="Vehicle.Mileage" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
                         <label asp-for="Vehicle.Description"></label>
                     </div>
                     <div class="col-8">
