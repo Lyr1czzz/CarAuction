@@ -22,7 +22,13 @@ namespace eTickets
 
             //Services configuration
             //builder.Services.AddScoped<IVehicleService, VehicleService>();
-
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddSession(Options =>
+            {
+                Options.IdleTimeout = TimeSpan.FromMinutes(10);
+                Options.Cookie.HttpOnly = true;
+                Options.Cookie.IsEssential = true;
+            });
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
@@ -39,6 +45,10 @@ namespace eTickets
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthorization();
+            app.UseSession();
+            
 
             app.MapControllerRoute(
                 name: "default",
