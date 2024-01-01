@@ -1,9 +1,10 @@
 ﻿using CarAuction.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarAuction.Data
 {
-    public class AppDbContext:DbContext
+    public class AppDbContext : IdentityDbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -18,5 +19,6 @@ namespace CarAuction.Data
         public DbSet<Make> Makes { get; set; }
         public DbSet<Model> Models { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     }
 }

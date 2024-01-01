@@ -20,8 +20,11 @@ namespace eTickets
                 options.UseSqlServer(builder.Configuration.GetSection("ConnectionStrings:DefaultConnection").Value);
             });
 
-            //Services configuration
-            //builder.Services.AddScoped<IVehicleService, VehicleService>();
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddDefaultTokenProviders()
+                .AddDefaultUI()
+                .AddEntityFrameworkStores<AppDbContext>();
+
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSession(Options =>
             {
@@ -45,10 +48,11 @@ namespace eTickets
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();
-            
+
+            app.MapRazorPages();
 
             app.MapControllerRoute(
                 name: "default",

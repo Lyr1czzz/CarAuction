@@ -2,8 +2,11 @@
 using CarAuction.Models;
 using CarAuction.Models.ViewModels;
 using CarAuction.Utility;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CarAuction.Controllers
 {
@@ -13,10 +16,10 @@ namespace CarAuction.Controllers
 
         public HomeController(AppDbContext db)
         {
-            _db = db;  
+            _db = db;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             HomeVM homeVM = new HomeVM()
             {
@@ -29,23 +32,20 @@ namespace CarAuction.Controllers
         public IActionResult Details(int id)
         {
             List<ShoppingCart> shoppingCarts = new List<ShoppingCart>();
-            if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart) != null
-                && HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart).Count() > 0)
+            if (HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart) != null && HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart).Count > 0)
             {
-                shoppingCarts = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
+                shoppingCarts = HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart);
             }
-
-
 
             DetailsVM detailsVM = new DetailsVM()
             {
-                Vehicle = _db.Vehicles.Include(u=>u.Make).Include(u => u.Model).Where(u=>u.Id==id).FirstOrDefault(),
+                Vehicle = _db.Vehicles.Include(u => u.Make).Include(u => u.Model).Where(u => u.Id == id).FirstOrDefault(),
                 ExistsInCard = false,
             };
 
-            foreach(var item in shoppingCarts)
+            foreach (var item in shoppingCarts)
             {
-                if(item.VehicleId == id)
+                if (item.VehicleId == id)
                 {
                     detailsVM.ExistsInCard = true;
                 }
@@ -58,14 +58,13 @@ namespace CarAuction.Controllers
         public IActionResult DetailsPost(int id)
         {
             List<ShoppingCart> shoppingCarts = new List<ShoppingCart>();
-            if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart) != null
-                && HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart).Count() > 0)
+            if (HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart) != null && HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart).Count > 0)
             {
-                shoppingCarts = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
+                shoppingCarts = HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart);
             }
 
             shoppingCarts.Add(new ShoppingCart { VehicleId = id });
-            HttpContext.Session.Set(WC.SessionCart, shoppingCarts);
+            HttpContext.Session.S(WC.SessionCart, shoppingCarts);
 
             return RedirectToAction(nameof(Index));
         }
@@ -73,10 +72,9 @@ namespace CarAuction.Controllers
         public IActionResult RemoveFromCart(int id)
         {
             List<ShoppingCart> shoppingCarts = new List<ShoppingCart>();
-            if (HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart) != null
-                && HttpContext.Session.Get<IEnumerable<ShoppingCart>>(WC.SessionCart).Count() > 0)
+            if (HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart) != null && HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart).Count > 0)
             {
-                shoppingCarts = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
+                shoppingCarts = HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart);
             }
 
             var itemToRemove = shoppingCarts.SingleOrDefault(r => r.VehicleId == id);
@@ -86,7 +84,7 @@ namespace CarAuction.Controllers
                 shoppingCarts.Remove(itemToRemove);
             }
 
-            HttpContext.Session.Set(WC.SessionCart, shoppingCarts);
+            HttpContext.Session.S(WC.SessionCart, shoppingCarts);
 
             return RedirectToAction(nameof(Index));
         }
