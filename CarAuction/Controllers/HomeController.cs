@@ -32,9 +32,9 @@ namespace CarAuction.Controllers
         public IActionResult Details(int id)
         {
             List<ShoppingCart> shoppingCarts = new List<ShoppingCart>();
-            if (HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart) != null && HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart).Count > 0)
+            if (HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart) != null && HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart).Count > 0)
             {
-                shoppingCarts = HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart);
+                shoppingCarts = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
             }
 
             DetailsVM detailsVM = new DetailsVM()
@@ -58,13 +58,13 @@ namespace CarAuction.Controllers
         public IActionResult DetailsPost(int id)
         {
             List<ShoppingCart> shoppingCarts = new List<ShoppingCart>();
-            if (HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart) != null && HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart).Count > 0)
+            if (HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart) != null && HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart).Count > 0)
             {
-                shoppingCarts = HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart);
+                shoppingCarts = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
             }
 
             shoppingCarts.Add(new ShoppingCart { VehicleId = id });
-            HttpContext.Session.S(WC.SessionCart, shoppingCarts);
+            HttpContext.Session.Set(WC.SessionCart, shoppingCarts);
 
             return RedirectToAction(nameof(Index));
         }
@@ -72,9 +72,9 @@ namespace CarAuction.Controllers
         public IActionResult RemoveFromCart(int id)
         {
             List<ShoppingCart> shoppingCarts = new List<ShoppingCart>();
-            if (HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart) != null && HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart).Count > 0)
+            if (HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart) != null && HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart).Count > 0)
             {
-                shoppingCarts = HttpContext.Session.G<List<ShoppingCart>>(WC.SessionCart);
+                shoppingCarts = HttpContext.Session.Get<List<ShoppingCart>>(WC.SessionCart);
             }
 
             var itemToRemove = shoppingCarts.SingleOrDefault(r => r.VehicleId == id);
@@ -84,7 +84,7 @@ namespace CarAuction.Controllers
                 shoppingCarts.Remove(itemToRemove);
             }
 
-            HttpContext.Session.S(WC.SessionCart, shoppingCarts);
+            HttpContext.Session.Set(WC.SessionCart, shoppingCarts);
 
             return RedirectToAction(nameof(Index));
         }
