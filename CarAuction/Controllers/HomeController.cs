@@ -24,7 +24,8 @@ namespace CarAuction.Controllers
             HomeVM homeVM = new HomeVM()
             {
                 Vehicles = _db.Vehicles.Include(u => u.Make).Include(u => u.Model),
-                Makes = _db.Makes
+                Makes = _db.Makes,
+                Models = _db.Models
             };
             return View(homeVM);
         }

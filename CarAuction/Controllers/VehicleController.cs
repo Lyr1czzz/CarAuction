@@ -1,12 +1,14 @@
 ﻿using CarAuction.Data;
 using CarAuction.Models;
 using CarAuction.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarAuction.Controllers
 {
+    [Authorize(Roles = WC.AdminRole)]
     public class VehicleController : Controller
     {
         private readonly AppDbContext _db;

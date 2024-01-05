@@ -1,27 +1,48 @@
 ﻿@model CarAuction.Models.Vehicle
 
- 
-<div class="col-1g-4 col-md-6 pb-4 filter @Model.Make.Name.Replace(' ','_')">
-    <!-- Card-->
-    <div class="card bg-white rounded shadow-sm" style="border:1px solid #222">
-        <div class="card-body px-3 pt-3 pb-1 row">
-            <div class="col-7"><label class="float-left">@Model.Name</label></div>
-            <div class="col-5"><label class="float-right"><span class="text-info h5">@string.Format("{0:c0}", Model.Price)</span></label></div>
-        </div>
-        <img class="card-img-top img-fluid d-block mx-auto mb-3" src="@Url.Content(@Model.Path)" alt="Card image cap">
-        <div class="card-body p-1 px-3 row">
-            <div class="col-6">
-                <span class="badge p-2 border w-100" style="background-color: lavenderblush">@Model.Make.Name</span>
-            </div>
-            <div class="col-6 border-0">
-                <span class="badge p-2 border w-100" style="background-color: aliceblue">@Model.Model.Name </span>
-            </div>
-            <div class="col-12 pt-2" style="font-size:13px; text-align: justify" >
-                <p>Mileage: @Model.Mileage</p>
-            </div>
-            <div class="col-12 p-1">
-                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-dark form-control btn-sm p-2" style="height: 40px">View Details</a>
+<div class="col-lg-4 col-md-6 pb-4 filter @Model.Make.Name.Replace(' ', '_') @Model.Model.Name.Replace(' ', '_')" onclick="location.href='@Url.Action("Details", new { id = Model.Id })'">
+    <div class="card bg-light h-100">
+        <img class="card-img-top" src="@Url.Content(@Model.Path)" alt="Vehicle Image">
+        <div class="card-body">
+            <h5 class="card-title">@Model.Name</h5>
+            <p class="card-text">Make: @Model.Make.Name</p>
+            <p class="card-text">Model: @Model.Model.Name</p>
+            <p class="card-text">Mileage: @Model.Mileage</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="card-text h5">@string.Format("{0:c0}", Model.Price)</span>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .card {
+        border: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+    }
+
+        .card:active {
+            transform: translateY(2px);
+        }
+
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .card-text {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .h5 {
+        font-size: 18px;
+        font-weight: bold;
+    }
+</style>

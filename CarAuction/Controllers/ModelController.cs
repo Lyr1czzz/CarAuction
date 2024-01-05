@@ -1,9 +1,11 @@
 ﻿using CarAuction.Data;
 using CarAuction.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarAuction.Controllers
 {
+    [Authorize(Roles = WC.AdminRole)]
     public class ModelController : Controller
     {
         private readonly AppDbContext _db;

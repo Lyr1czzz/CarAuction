@@ -13,7 +13,7 @@ namespace CarAuction.Models
 
         public string Description { get; set; }
 
-        public string Mileage { get; set; }
+        public int Mileage { get; set; }
 
         [Range(1, int.MaxValue)]
         public double Price { get; set;}

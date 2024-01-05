@@ -1,39 +1,159 @@
 ﻿@model CarAuction.Models.ViewModels.HomeVM
 
+<style>
+    .arrow {
+        position: absolute;
+        right: 10px;
+        width: 10px;
+        height: 10px;
+        border-top: 2px solid black;
+        border-right: 2px solid black;
+        transition: transform 0.3s;
+        transform: rotate(45deg);
+    }
+
+    .arrow.open {
+        transform: rotate(225deg);
+    }
+
+    .manufacturer-list,
+    .model-list {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+</style>
+
 <div class="container">
-    <div class="text-center">
-        <button class="btn btn-dark filter-button" data-filter="all">All</button>
-        @foreach(var obj in Model.Makes)
-        {
-            <button class="btn btn-outline-secondary filter-button" data-filter="@obj.Name.Replace(' ','_')">
-                @obj.Name
-            </button>
-        }
-    </div>
-    <br />
     <div class="row">
-        @foreach(var obj in Model.Vehicles)
-        {
-            <partial name="_IndividualVehicleCard" model="obj" />
-            //display all product
-        }
+        <div class="col-md-3">
+            <h4>Filters</h4>
+            <div class="card border-0">
+                <div class="card-header p-2" id="makeHeading">
+                    <h5 class="mb-0">
+                        <button class="btn collapsed" type="button" data-toggle="collapse" data-target="#makeCollapse" aria-expanded="false" aria-controls="makeCollapse">
+                            Makes
+                            <span class="arrow"></span>
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="makeCollapse" class="collapse" aria-labelledby="makeHeading">
+                    <div class="card-body px-2 py-3">
+                        <form id="makeFilterForm">
+                            <div class="form-group">
+                                <input type="text" id="makeSearchInput" class="form-control mb-2" placeholder="Search makes">
+                            </div>
+                        </form>
+                        <div class="card-body manufacturer-list">
+                            @foreach (var make in Model.Makes)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input make-checkbox" type="checkbox" id="@make.Name.Replace(' ', '_')" value="@make.Name.Replace(' ', '_')">
+                                    <label class="form-check-label" for="@make.Name.Replace(' ', '_')">@make.Name</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 mt-3">
+                <div class="card-header p-2" id="modelHeading">
+                    <h5 class="mb-0">
+                        <button class="btn collapsed" type="button" data-toggle="collapse" data-target="#modelCollapse" aria-expanded="false" aria-controls="modelCollapse">
+                            Models
+                            <span class="arrow"></span>
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="modelCollapse" class="collapse" aria-labelledby="modelHeading">
+                    <div class="card-body px-2 py-3">
+                        <form id="modelFilterForm">
+                            <input type="text" id="modelSearchInput" class="form-control mb-2" placeholder="Search models">
+                        </form>
+                        <div class="card-body model-list">
+                            @foreach (var item in Model.Models)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input model-checkbox" type="checkbox" id="@item.Name.Replace(' ', '_')" value="@item.Name.Replace(' ', '_')">
+                                    <label class="form-check-label" for="@item.Name.Replace(' ', '_')">@item.Name</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="row">
+                @foreach (var obj in Model.Vehicles)
+                {
+                    <partial name="_IndividualVehicleCard" model="obj" />
+                }
+            </div>
+        </div>
     </div>
 </div>
 
-@section Scripts{
+@section Scripts {
     <script>
         $(document).ready(function () {
-
-            $(".filter-button").click(function () {
-                var value = $(this).attr('data-filter');
-                if (value == "all") {
-                    $('.filter').show('1000');
-                }
-                else {
-                    $(".filter").not('.' + value).hide('3000');
-                    $('.filter').filter('.' + value).show('3000');
-                }
+            $(".make-checkbox, .model-checkbox").change(function () {
+                applyFilters();
             });
+
+            $(".card-header").click(function () {
+                var collapseElement = $(this).closest(".card").find(".collapse");
+                var arrowElement = $(this).find(".arrow");
+
+                collapseElement.collapse("toggle");
+                arrowElement.toggleClass("open");
+            });
+
+            $("#makeSearchInput").on("input", function () {
+                filterList($(this).val().toLowerCase(), ".manufacturer-list");
+            });
+
+            $("#modelSearchInput").on("input", function () {
+                filterList($(this).val().toLowerCase(), ".model-list");
+            });
+
+            function filterList(searchValue, listSelector) {
+                $(listSelector + " .form-check").each(function () {
+                    var itemName = $(this).text().trim().toLowerCase();
+                    if (itemName.indexOf(searchValue) === -1) {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                });
+            }
+
+            function applyFilters() {
+                var selectedMakes = $(".make-checkbox:checked").map(function () {
+                    return "." + $(this).val();
+                }).get();
+
+                var selectedModels = $(".model-checkbox:checked").map(function () {
+                    return "." + $(this).val();
+                }).get();
+
+                if (selectedMakes.length > 0 || selectedModels.length > 0) {
+                    $(".filter").hide();
+
+                    if (selectedMakes.length > 0 && selectedModels.length > 0) {
+                        $(selectedMakes.join(", ")).filter(selectedModels.join(", ")).show();
+                    } else if (selectedMakes.length > 0) {
+                        $(selectedMakes.join(", ")).show();
+                    } else {
+                        $(selectedModels.join(", ")).show();
+                    }
+                } else {
+                    $(".filter").show();
+                }
+            }
         });
     </script>
 }

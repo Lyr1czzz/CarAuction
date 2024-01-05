@@ -1,17 +1,70 @@
 ﻿@model List<Vehicle>
 
+<style>
+    .noitem-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .card-header {
+        background-color: #343a40;
+        color: #fff;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .card {
+        border-radius: 5px;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    }
+
+    .btn-outline-info {
+        color: #17a2b8;
+        border-color: #17a2b8;
+    }
+
+        .btn-outline-info:hover {
+            color: #fff;
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+        }
+
+    .btn-outline-danger {
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+
+        .btn-outline-danger:hover {
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+    .btn-success {
+        color: #fff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+        .btn-success:hover {
+            color: #fff;
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+</style>
 
 @if (Model.Count() > 0)
 {
     <form method="post">
         <br />
-        <div class="backgroundWhiteBorder" >
+        <div class="backgroundWhiteBorder">
             <div class="container row">
                 <div class="col -8">
                     <div class="card mt-4">
-                        <div class="card-header bg-dark text-light ml-0 row container">
+                        <div class="card-header bg-dark text-light">
                             <div class="col-6">
-                                <i class="fa fa-shopping-cart"></i> &nbsp;
+                                <i class="fa fa-shopping-cart"></i>
                                 Shopping Cart
                             </div>
                             <div class="col-6 text-right">
@@ -74,5 +127,8 @@
 }
 else
 {
-    <p>Please add items to cart.</p>
+    <div class="noitem-container">
+        <img src="@Url.Content("../../Files/WC/nocart.png")" width="250px" />
+        <h4>Please add items to cart...</h4>
+    </div>
 }

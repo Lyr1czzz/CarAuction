@@ -1,5 +1,7 @@
+using CarAuction;
 using CarAuction.Data;
 using CarAuction.Models;
+using CarAuction.Utility;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
@@ -24,6 +26,8 @@ namespace eTickets
                 .AddDefaultTokenProviders()
                 .AddDefaultUI()
                 .AddEntityFrameworkStores<AppDbContext>();
+
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSession(Options =>

@@ -12,13 +12,15 @@ namespace CarAuction.Controllers
     public class CartController : Controller
     {
         private readonly AppDbContext _db;
+        private readonly IEmailSender _emailSender;
 
         [BindProperty]
         public VehicleUserVM VehicleUserVM { get; set; }
 
-        public CartController(AppDbContext db)
+        public CartController(AppDbContext db, IEmailSender emailSender)
         {
             _db = db;
+            _emailSender = emailSender;
         }
 
         public IActionResult Index()
@@ -34,7 +36,7 @@ namespace CarAuction.Controllers
             List<int> vehicleInCart = shoppingCarts.Select(i=>i.VehicleId).ToList();
 
             List<Vehicle> vehicles = _db.Vehicles.Where(u => vehicleInCart.Contains(u.Id)).ToList();
-
+            _emailSender.SendEmailAsync("billyroll03@gmail.com", "qerw", "dsfgfsdgsgs");
             return View(vehicles);
         }
 
