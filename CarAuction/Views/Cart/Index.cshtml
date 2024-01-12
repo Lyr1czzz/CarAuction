@@ -2,53 +2,98 @@
 
 <style>
     .noitem-container {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .card {
+        border-radius: 5px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        margin-top: 50px;
     }
 
     .card-header {
         background-color: #343a40;
         color: #fff;
         border-radius: 5px 5px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
     }
 
-    .card {
+    .card-body {
+        padding: 20px;
+    }
+
+    .product-details {
+        color: #821f3d;
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 10px;
+        color: #000;
+    }
+
+    .product-image {
+        max-width: 150px;
+        height: auto;
+        object-fit: contain;
         border-radius: 5px;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        border: 1px solid #bbb;
+        margin-right: 20px;
     }
 
-    .btn-outline-info {
-        color: #17a2b8;
-        border-color: #17a2b8;
+    .product-info {
+        margin-right: 20px;
+        flex-grow: 1;
+        color: #000;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
-        .btn-outline-info:hover {
-            color: #fff;
-            background-color: #17a2b8;
-            border-color: #17a2b8;
-        }
+    .product-name {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #000;
+    }
 
-    .btn-outline-danger {
+    .product-mileage {
+        font-size: 12px;
+    }
+
+    .product-price {
+        font-size: 17px;
+        text-align: right;
+    }
+
+    .remove-button {
         color: #dc3545;
-        border-color: #dc3545;
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-size: 20px;
+        margin-left: auto;
     }
 
-        .btn-outline-danger:hover {
-            color: #fff;
-            background-color: #dc3545;
-            border-color: #dc3545;
-        }
-
-    .btn-success {
+    .continue-button {
         color: #fff;
         background-color: #28a745;
         border-color: #28a745;
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
     }
 
-        .btn-success:hover {
-            color: #fff;
+        .continue-button:hover {
             background-color: #218838;
             border-color: #1e7e34;
         }
@@ -57,67 +102,43 @@
 @if (Model.Count() > 0)
 {
     <form method="post">
-        <br />
-        <div class="backgroundWhiteBorder">
-            <div class="container row">
-                <div class="col -8">
-                    <div class="card mt-4">
-                        <div class="card-header bg-dark text-light">
-                            <div class="col-6">
-                                <i class="fa fa-shopping-cart"></i>
-                                Shopping Cart
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <i class="fa fa-shopping-cart"></i>
+                        Shopping Cart
+                    </div>
+                    <a asp-action="Index" asp-controller="Home" class="btn btn-outline-info btn-sm">Continue Shopping</a>
+                </div>
+                <div class="card-body">
+                    @foreach (var item in Model)
+                    {
+                        <div class="product-details">
+                            <div>
+                                <img src="@Url.Content("../../" + @item.Path)" class="product-image" />
                             </div>
-                            <div class="col-6 text-right">
-                                <a asp-action="Index" asp-controller="Home" class="btn btn-outline-info btn-sm">Continue Shopping</a>
+                            <div class="product-info">
+                                <div>
+                                    <div class="product-name">@item.Name</div>
+                                    <div class="product-price">@((item.Price).ToString("c"))</div>
+                                    <div class="product-mileage">Mileage: @item.Mileage</div>
+                                </div>
+                            </div>
+                            <div>
+                                <button type="submit" asp-action="Remove" asp-route-id="@item.Id" class="remove-button">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div class=" d-none d-lg-block">
-                                <div class="row" style="color:#821f3d">
-                                    <div class="col-lg-2">
-                                    </div>
-                                    <div class="col-12 col-1g-7">
-                                        Product Details
-                                    </div>
-                                    <div class="col-12 col-lg-2">
-                                        Price
-                                    </div>
-                                    <div class="col-6 col-sm-4 col-lg-1">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr />
-                            @foreach (var item in Model)
-                            {
-                                <div class="row h-100">
-                                    <div class="col-4 col-md-2 text-center py-2">
-                                        <img src="@Url.Content("../../"+@item.Path)" class="rounded" width="100%" />
-                                    </div>
-                                    <div class="col-8 col-lg-7">
-                                        <h5>@item.Name</h5>
-                                        <div style="font-size:11px;">@item.Mileage</div>
-                                    </div>
-                                    <div class="col-3 col-lg-2 pt-1g-4" style="font-size:11px;">
-                                        <span style="font-size:17px;"> @item.Price</span>
-                                    </div>
-                                    <div class="col-2 col-1g-1 p-0 pt-lg-4 text-center">
-                                        <a asp-action="Remove" asp-route-id="@item.Id" class="btn btn-outline-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            }
-                            <br />
-                        </div>
-                        <div class="card-footer">
-                            <div class="row">
-                                <div class="col-6 col-md-3 offset-md-9">
-                                    <button type="submit" class="btn btn-success form-control ">
-                                        <span>Continue</span>
-                                    </button>
-                                </div>
-                            </div>
+                    }
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-md-3 offset-md-9">
+                            <button type="submit" class="continue-button">
+                                <span>Continue</span>
+                            </button>
                         </div>
                     </div>
                 </div>
