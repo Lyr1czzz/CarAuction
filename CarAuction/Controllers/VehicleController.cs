@@ -97,7 +97,7 @@ namespace CarAuction.Controllers
                             };
                             _db.VehicleImages.Add(vehicleImage);
                         }
-                        _db.SaveChanges(); // Сохраняем все изображения
+                        _db.SaveChanges();
                     }
                 }
                 else
