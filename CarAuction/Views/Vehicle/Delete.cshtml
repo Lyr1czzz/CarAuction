@@ -75,7 +75,7 @@
             <div class="col-4 pt-4">
                 @if(Model.Id != 0)
                 {
-                    <img src="@Url.Content("../../"+@Model.Path)" width="100%" style="border-radius:5px; border:1px solid #bbb">
+                    <img src="@Model.Images.ElementAt(0).ImagePath)" width="100%" style="border-radius:5px; border:1px solid #bbb">
                 }
             </div>
         </div>

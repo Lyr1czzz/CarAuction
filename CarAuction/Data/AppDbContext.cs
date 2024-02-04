@@ -19,6 +19,7 @@ namespace CarAuction.Data
         public DbSet<Make> Makes { get; set; }
         public DbSet<Model> Models { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     }
 }

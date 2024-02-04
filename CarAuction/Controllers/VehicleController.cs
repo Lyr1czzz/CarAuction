@@ -22,13 +22,11 @@ namespace CarAuction.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Vehicle> vehicleList = _db.Vehicles.Include(u=>u.Make).Include(u=>u.Model);
-
-            //foreach (var item in vehicleList)
-            //{
-            //    //item.Make = _db.Makes.FirstOrDefault(u => u.Id == item.MakeId);
-            //    //item.Model = _db.Models.FirstOrDefault(u => u.Id == item.ModelId);
-            //}
+            var vehicleList = _db.Vehicles
+                                 .Include(u => u.Make)
+                                 .Include(u => u.Model)
+                                 .Include(u => u.Images)
+                                 .ToList(); // Чтобы вызвать исключение здесь, если есть проблемы с запросом
 
             return View(vehicleList);
         }
@@ -70,72 +68,82 @@ namespace CarAuction.Controllers
         //Post - Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert([FromForm] VehicleVM vehicleVM, IFormFile? uploadedFile)
+        public IActionResult Upsert([FromForm] VehicleVM vehicleVM, List<IFormFile>? uploadedFiles)
         {
             if (ModelState.IsValid)
             {
-                if(vehicleVM.Vehicle.Id == 0) 
+                if (vehicleVM.Vehicle.Id == 0)
                 {
+                    // Создание нового объявления автомобиля
+                    _db.Add(vehicleVM.Vehicle);
+                    _db.SaveChanges(); // Сохранить, чтобы получить ID для нового авто
 
-                    if (uploadedFile != null)
+                    if (uploadedFiles.Any())
                     {
-                        // Creating
-                        string path = "/Files/" + uploadedFile.FileName;
-                        
-                        using (var fileStream = new FileStream(_webHostEnvironment.WebRootPath + path, FileMode.Create))
+                        foreach (var file in uploadedFiles)
                         {
-                            uploadedFile.CopyTo(fileStream);
-                        }
+                            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                            string fullPath = Path.Combine(_webHostEnvironment.WebRootPath, "Files", fileName);
 
-                        Make selectedMake = _db.Makes.FirstOrDefault(m => m.Id == vehicleVM.Vehicle.MakeId);
+                            using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                            {
+                                file.CopyTo(fileStream);
+                            }
 
-                        if (selectedMake != null)
-                        {
-                            vehicleVM.Vehicle.Make = selectedMake;
-                            vehicleVM.Vehicle.Path = "Files/" + uploadedFile.FileName;
-                            _db.Vehicles.Add(vehicleVM.Vehicle);
-                            _db.SaveChanges();
-                            return RedirectToAction("Index");
+                            VehicleImage vehicleImage = new VehicleImage()
+                            {
+                                VehicleId = vehicleVM.Vehicle.Id,
+                                ImagePath = Path.Combine("Files", fileName)
+                            };
+                            _db.VehicleImages.Add(vehicleImage);
                         }
-                        else
-                        {
-                            ModelState.AddModelError("", "Недопустимый идентификатор MakeId.");
-                        }
+                        _db.SaveChanges(); // Сохраняем все изображения
                     }
                 }
                 else
                 {
-                    // Updating
-                    var objFromDb = _db.Vehicles.AsNoTracking().FirstOrDefault(u => u.Id == vehicleVM.Vehicle.Id);
-                    if (uploadedFile is not null)
+                    // Обновление существующего объявления
+                    var vehicleFromDb = _db.Vehicles.AsNoTracking().FirstOrDefault(u => u.Id == vehicleVM.Vehicle.Id);
+                    if (vehicleFromDb == null)
                     {
-                        string path = "/Files/" + uploadedFile.FileName;
-
-                        var oldFile = Path.Combine(path, objFromDb.Path);
-
-                        if (System.IO.File.Exists(oldFile))
-                        {
-                            System.IO.File.Delete(oldFile);
-                        }
-
-                        using (var fileStream = new FileStream(_webHostEnvironment.WebRootPath + path, FileMode.Create))
-                        {
-                            uploadedFile.CopyTo(fileStream);
-                        }
-                        vehicleVM.Vehicle.Path = path;
+                        return NotFound();
                     }
-                    else
+
+                    _db.Update(vehicleVM.Vehicle);
+
+                    // Обработка загруженных файлов
+                    if (uploadedFiles.Any())
                     {
-                        vehicleVM.Vehicle.Path = objFromDb.Path;
+                        // Удаляем все старые изображения
+                        var imagesFromDb = _db.VehicleImages.Where(vi => vi.VehicleId == vehicleVM.Vehicle.Id);
+                        _db.VehicleImages.RemoveRange(imagesFromDb);
+
+                        foreach (var file in uploadedFiles)
+                        {
+                            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                            string fullPath = Path.Combine(_webHostEnvironment.WebRootPath, "Files", fileName);
+
+                            using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                            {
+                                file.CopyTo(fileStream);
+                            }
+
+                            VehicleImage vehicleImage = new VehicleImage()
+                            {
+                                VehicleId = vehicleVM.Vehicle.Id,
+                                ImagePath = Path.Combine("Files", fileName)
+                            };
+                            _db.VehicleImages.Add(vehicleImage);
+                        }
                     }
-                    _db.Vehicles.Update(vehicleVM.Vehicle);
+
                     _db.SaveChanges();
-                    return RedirectToAction("Index");
                 }
+
+                return RedirectToAction("Index");
             }
 
-            // Если модель не прошла проверку, возвращаем представление с сообщениями об ошибках
-
+            // Загрузка значений для выпадающих списков в случае ошибки
             vehicleVM.MakeSelectList = _db.Makes.Select(i => new SelectListItem
             {
                 Text = i.Name,
@@ -146,6 +154,7 @@ namespace CarAuction.Controllers
                 Text = i.Name,
                 Value = i.Id.ToString(),
             });
+
             return View(vehicleVM);
         }
 
@@ -179,12 +188,8 @@ namespace CarAuction.Controllers
 
             string path = "/Files/";
 
-            var oldFile = Path.Combine(path, obj.Path);
+            
 
-            if (System.IO.File.Exists(oldFile))
-            {
-                System.IO.File.Delete(oldFile);
-            }
 
             _db.Vehicles.Remove(obj);
             _db.SaveChanges();

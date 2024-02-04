@@ -1,54 +1,152 @@
 ﻿@model CarAuction.Models.ViewModels.DetailsVM
 
+@{
+    ViewData["Title"] = "Детальная информация о транспортном средстве";
+}
+
 <style>
+    .vehicle-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+
+    .vehicle-info h1 {
+        margin: 0;
+        font-size: 1.75rem; 
+        color: #333; 
+    }
+
+    .vehicle-info .price {
+        margin: 0;
+        font-weight: bold;
+        color: #28a745; 
+        font-size: 1.5rem;
+    }
+    .header-area {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e3e3e3;
+        padding-bottom: 10px;
+    }
+
+    .vehicle-heading {
+        padding: 10px 0;
+    }
+
+    .vehicle-price {
+        color: #28a745; 
+        font-size: 1.5em;
+    }
+
     .btn-custom {
         background-color: #5268f9;
         color: white;
     }
+
+    .btn-back-list {
+        margin-bottom: 15px;
+    }
+
+    .image-area, .detail-area {
+        background-color: white;
+        border: 1px solid #e3e3e3;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 10px;
+    }
+
+    .detail-label {
+        color: #212529; 
+        font-weight: 700;
+    }
+
+    .detail-value {
+        float: right;
+        font-weight: 300;
+    }
 </style>
 
-<div class="container">
+<div class="container my-4">
     <form method="post">
         <input asp-for="@Model.Vehicle.Id" hidden />
-        <div class="card">
-            <div class="row">
-                <div class="col-lg-6 m-3">
-                    <img src="@Url.Content("../../"+@Model.Vehicle.Path)" style="border-radius:5px; border:1px solid #bbb" class="img-fluid" alt="Vehicle Image" />
-                    <div class="card-text m-3">
-                        <h5>Characteristics:</h5>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">Make: @Model.Vehicle.Make.Name</li>
-                            <li class="list-group-item">Model: @Model.Vehicle.Model.Name</li>
-                            <li class="list-group-item">Mileage: @Model.Vehicle.Mileage</li>
-                        </ul>
-                        <h5>Description:</h5>
-                        <p>@Html.Raw(@Model.Vehicle.Description)</p>
-                    </div>
-                </div>
-                <div class="col-lg-5">
-                    <div class="card-body">
-                        <h2 class="card-title">@Model.Vehicle.Name</h2>
-                        <h3 class="card-subtitle text-muted">@((Model.Vehicle.Price).ToString("c"))</h3>
-                    </div>
-                    <div>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <a asp-action="Index" class="btn btn-custom btn-lg btn-block">Back to List</a>
-                            </div>
-                            <div class="col-lg-6">
-                                @if (Model.ExistsInCard)
+    <div class="row mb-2">
+        <div class="col-12">
+            <a asp-action="Index" class="btn btn-custom btn-back-list">← Вернуться к списку</a>
+        </div>
+    </div>
+    <div class="vehicle-info">
+        <h1>@Model.Vehicle.Name</h1>
+        <div class="price">@Model.Vehicle.Price.ToString("C")</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="image-area">
+                @if (@Model.Vehicle.Images?.Any() == true)
+                {
+                    <div uk-slideshow="animation: push; autoplay: true; autoplay-interval: 5000">
+
+                        <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1">
+
+                            <ul class="uk-slideshow-items">
+                                @foreach (var image in @Model.Vehicle.Images)
                                 {
-                                    <a asp-action="RemoveFromCart" asp-route-id="@Model.Vehicle.Id" class="btn btn-danger btn-lg btn-block">Remove from Cart</a>
+                                    <li>
+                                        <img src="@Url.Content("/"+image.ImagePath)" alt="" uk-cover>
+                                    </li>
                                 }
-                                else
-                                {
-                                    <button type="submit" asp-route-id="@Model.Vehicle.Id" class="btn btn-custom btn-lg btn-block">Add to Cart</button>
-                                }
-                            </div>
+                            </ul>
+
+                            <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous uk-slideshow-item="previous"></a>
+                            <a class="uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next uk-slideshow-item="next"></a>
+
                         </div>
+
+                        <ul class="uk-slideshow-nav uk-dotnav uk-flex-center uk-margin"></ul>
+
                     </div>
+                }
+                else
+                {
+                    <img src="@Url.Content("~/images/default-image.png")" class="w-100" alt="Default Vehicle Image" />
+                }
+            </div>
+            <div class="detail-area">
+                <p>@Html.Raw(@Model.Vehicle.Description)</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="detail-area">
+                @if (Model.ExistsInCard)
+                {
+                    <a asp-action="RemoveFromCart" asp-route-id="@Model.Vehicle.Id" class="btn btn-danger btn-lg btn-block">Remove from Cart</a>
+                }
+                else
+                {
+                    <button type="submit" asp-route-id="@Model.Vehicle.Id" class="btn btn-custom btn-lg btn-block">Add to Cart</button>
+                }
+                <hr />
+
+                <div>
+                    <span class="detail-label">Make:</span>
+                    <span class="detail-value">@Model.Vehicle.Make.Name</span>
+                </div>
+                <div>
+                    <span class="detail-label">Model:</span>
+                    <span class="detail-value">@Model.Vehicle.Model.Name</span>
+                </div>
+                <div>
+                    <span class="detail-label">Пробег:</span>
+                    <span class="detail-value">@Model.Vehicle.Mileage</span>
                 </div>
             </div>
         </div>
+    </div>
     </form>
 </div>
+
+<!-- Bootstrap JS и зависимости (необходимы для функций Bootstrap, таких как модальные окна и вкладки) -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>

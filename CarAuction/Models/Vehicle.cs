@@ -18,8 +18,6 @@ namespace CarAuction.Models
         [Range(1, int.MaxValue)]
         public double Price { get; set;}
 
-        public string Path { get; set; } = string.Empty;
-
         [Display(Name= "Make Type")]
         public int MakeId { get; set; }
 
@@ -31,5 +29,7 @@ namespace CarAuction.Models
 
         [ForeignKey("ModelId")]
         public virtual Model? Model { get; set; }
+
+        public virtual ICollection<VehicleImage>? Images { get; set; }
     }
 }

@@ -58,7 +58,7 @@
                         Image
                     </div>
                     <div class="col-8">
-                        <input type="file" name="uploadedFile" id="uploadBox" multiple class="form-control" />
+                        <input type="file" asp-for="UploadedFiles" multiple>
                     </div>
                 </div>
 
@@ -111,7 +111,7 @@
             <div class="col-4 pt-4">
                 @if(Model.Vehicle.Id != 0)
                 {
-                    <img src="@Url.Content("../../"+@Model.Vehicle.Path)" width="100%" style="border-radius:5px; border:1px solid #bbb">
+                    @* <img src="@Url.Content("../../"+@Model.Vehicle.Path)" width="100%" style="border-radius:5px; border:1px solid #bbb"> *@
                 }
             </div>
         </div>
