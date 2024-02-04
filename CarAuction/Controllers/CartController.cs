@@ -4,6 +4,7 @@ using CarAuction.Models.ViewModels;
 using CarAuction.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace CarAuction.Controllers
@@ -35,8 +36,8 @@ namespace CarAuction.Controllers
 
             List<int> vehicleInCart = shoppingCarts.Select(i=>i.VehicleId).ToList();
 
-            List<Vehicle> vehicles = _db.Vehicles.Where(u => vehicleInCart.Contains(u.Id)).ToList();
-            _emailSender.SendEmailAsync("billyroll03@gmail.com", "qerw", "dsfgfsdgsgs");
+            List<Vehicle> vehicles = _db.Vehicles.Where(u => vehicleInCart.Contains(u.Id)).Include(u => u.Images).ToList();
+            //_emailSender.SendEmailAsync("billyroll03@gmail.com", "qerw", "dsfgfsdgsgs");
             return View(vehicles);
         }
 

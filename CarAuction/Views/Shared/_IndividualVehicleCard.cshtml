@@ -4,12 +4,25 @@
     <div class="card h-100 shadow-sm">
         <img src="@Url.Content(@Model.Images.FirstOrDefault()?.ImagePath ?? "путь_к_изображению_заполнителю")" class="card-img-top">
         <div class="card-body">
-            <h5 class="card-title">@Model.Name</h5>
-            <p class="card-text">Make: @Model.Make.Name</p>
-            <p class="card-text">Model: @Model.Model.Name</p>
-            <p class="card-text">Mileage: @Model.Mileage.ToString("N0")</p>
-            <div class="d-flex justify-content-between align-items-center">
-                <span class="card-text h5">@Model.Price.ToString("C0")</span>
+            <h5 class="card-title">
+                @Model.Name.Substring(0, Math.Min(Model.Name.Length, 22))@(Model.Name.Length > 22 ? "..." : "")
+            </h5>
+            <hr />
+            <div>
+                Make:
+                <span class="float-right">@Model.Make.Name</span>
+            </div>
+            <div>
+                Model:
+                <span class="float-right">@Model.Model.Name</span>
+            </div>
+            <div>
+                Пробег:
+                <span class="float-right">@Model.Mileage км</span>
+            </div>
+            <br />
+            <div class="">
+                <strong><span class="float-right">@Model.Price.ToString("C0")</span></strong>
             </div>
         </div>
     </div>

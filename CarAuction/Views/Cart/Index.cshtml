@@ -102,6 +102,9 @@
 @if (Model.Count() > 0)
 {
     <form method="post">
+        <div class="mb-2">
+            <a asp-action="Index" asp-controller="Home" class="btn btn-primary">← Вернуться к списку</a>
+        </div>
         <div class="container">
             <div class="card">
                 <div class="card-header">
@@ -109,14 +112,13 @@
                         <i class="fa fa-shopping-cart"></i>
                         Shopping Cart
                     </div>
-                    <a asp-action="Index" asp-controller="Home" class="btn btn-outline-info btn-sm">Continue Shopping</a>
                 </div>
                 <div class="card-body">
                     @foreach (var item in Model)
                     {
                         <div class="product-details">
                             <div>
-                                <img src="@Url.Content("../../" + @item.Images.ElementAt(0).ImagePath)" class="product-image" />
+                                <img src="@Url.Content(@item.Images.FirstOrDefault()?.ImagePath ?? "путь_к_изображению_заполнителю")" class="product-image" />
                             </div>
                             <div class="product-info">
                                 <div>
