@@ -21,5 +21,7 @@ namespace CarAuction.Data
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Bid> Bids { get; set; }
+        public DbSet<Auction> Auctions { get; set; }
     }
 }

@@ -1,0 +1,53 @@
+﻿@model CarAuction.Models.ViewModels.AuctionVM
+
+@{
+    var title = "Create Auction";
+}
+
+<form method="post" enctype="multipart/form-data">
+    @if (Model.Auction.Id != 0)
+    {
+        title = "Edit Auction";
+        <input asp-for="Auction.Id" hidden />
+    }
+    <div class="border p-3">
+        <div class="form-group row">
+            <h2 class="text-info p1-3">@title</h2>
+        </div>
+        <div class="row">
+            <div class="col-8">
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Auction.AuctionDate"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="Auction.AuctionDate" class="form-control" />
+                        <span asp-validation-for="Auction.AuctionDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-8 offset-4 row">
+                        <div class="col">
+                            @if (Model.Auction.Id != 0)
+                            {
+                                //update
+                                <input type="submit" class="btn btn-success w-100" value="Update" />
+                            }
+                            else
+                            {
+                                //create
+                                <input type="submit" onclick="return validateInput()" class="btn btn-success w-100" value="Create" />
+                            }
+                        </div>
+                        <div class="col">
+                            <a asp-action="Index" class="btn btn-primary w-100">
+                                <i class="fa-solid fa-right-from-bracket"></i> Back
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

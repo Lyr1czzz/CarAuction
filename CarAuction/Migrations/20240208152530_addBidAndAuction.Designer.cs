@@ -4,6 +4,7 @@ using CarAuction.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarAuction.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240208152530_addBidAndAuction")]
+    partial class addBidAndAuction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,10 +32,6 @@ namespace CarAuction.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AuctionDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -50,19 +49,10 @@ namespace CarAuction.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("AuctionId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("AuctionId");
 
@@ -389,10 +379,6 @@ namespace CarAuction.Migrations
 
             modelBuilder.Entity("CarAuction.Models.Bid", b =>
                 {
-                    b.HasOne("CarAuction.Models.ApplicationUser", null)
-                        .WithMany("Bids")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("CarAuction.Models.Auction", "Auction")
                         .WithMany("Bids")
                         .HasForeignKey("AuctionId")
@@ -501,11 +487,6 @@ namespace CarAuction.Migrations
             modelBuilder.Entity("CarAuction.Models.Vehicle", b =>
                 {
                     b.Navigation("Images");
-                });
-
-            modelBuilder.Entity("CarAuction.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("Bids");
                 });
 #pragma warning restore 612, 618
         }

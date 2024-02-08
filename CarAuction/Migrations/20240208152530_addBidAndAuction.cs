@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CarAuction.Migrations
 {
     /// <inheritdoc />
-    public partial class m1 : Migration
+    public partial class addBidAndAuction : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -50,6 +50,18 @@ namespace CarAuction.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Auctions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Auctions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -186,6 +198,26 @@ namespace CarAuction.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Bids",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AuctionId = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bids", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bids_Auctions_AuctionId",
+                        column: x => x.AuctionId,
+                        principalTable: "Auctions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Vehicles",
                 columns: table => new
                 {
@@ -195,13 +227,19 @@ namespace CarAuction.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Mileage = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
-                    Path = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MakeId = table.Column<int>(type: "int", nullable: false),
-                    ModelId = table.Column<int>(type: "int", nullable: false)
+                    ModelId = table.Column<int>(type: "int", nullable: false),
+                    AuctionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Vehicles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Vehicles_Auctions_AuctionId",
+                        column: x => x.AuctionId,
+                        principalTable: "Auctions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Vehicles_Makes_MakeId",
                         column: x => x.MakeId,
@@ -212,6 +250,26 @@ namespace CarAuction.Migrations
                         name: "FK_Vehicles_Models_ModelId",
                         column: x => x.ModelId,
                         principalTable: "Models",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VehicleImages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    VehicleId = table.Column<int>(type: "int", nullable: false),
+                    ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VehicleImages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VehicleImages_Vehicles_VehicleId",
+                        column: x => x.VehicleId,
+                        principalTable: "Vehicles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -256,6 +314,21 @@ namespace CarAuction.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bids_AuctionId",
+                table: "Bids",
+                column: "AuctionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VehicleImages_VehicleId",
+                table: "VehicleImages",
+                column: "VehicleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vehicles_AuctionId",
+                table: "Vehicles",
+                column: "AuctionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Vehicles_MakeId",
                 table: "Vehicles",
                 column: "MakeId");
@@ -285,13 +358,22 @@ namespace CarAuction.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Vehicles");
+                name: "Bids");
+
+            migrationBuilder.DropTable(
+                name: "VehicleImages");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Vehicles");
+
+            migrationBuilder.DropTable(
+                name: "Auctions");
 
             migrationBuilder.DropTable(
                 name: "Makes");
