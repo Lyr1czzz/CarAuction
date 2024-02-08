@@ -75,7 +75,34 @@
             <div class="col-4 pt-4">
                 @if(Model.Id != 0)
                 {
-                    <img src="@Model.Images.ElementAt(0).ImagePath)" width="100%" style="border-radius:5px; border:1px solid #bbb">
+                    @if (Model.Images?.Any() == true)
+                    {
+                        <div uk-slideshow="animation: push; autoplay: true; autoplay-interval: 5000">
+
+                            <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1">
+
+                                <ul class="uk-slideshow-items">
+                                    @foreach (var image in Model.Images)
+                                    {
+                                        <li>
+                                            <img src="@Url.Content(image.ImagePath)" alt="" uk-cover>
+                                        </li>
+                                    }
+                                </ul>
+
+                                <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous uk-slideshow-item="previous"></a>
+                                <a class="uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next uk-slideshow-item="next"></a>
+
+                            </div>
+
+                            <ul class="uk-slideshow-nav uk-dotnav uk-flex-center uk-margin"></ul>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <img src="@Url.Content("~/images/default-image.png")" width="100%" style="border-radius:5px; border:1px solid #bbb">
+                    }
                 }
             </div>
         </div>

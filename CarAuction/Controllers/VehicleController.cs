@@ -166,7 +166,7 @@ namespace CarAuction.Controllers
                 return NotFound();
             }
 
-            Vehicle vehicle = _db.Vehicles.Include(u=>u.Make).Include(u=>u.Model).FirstOrDefault(u=>u.Id==id);
+            Vehicle vehicle = _db.Vehicles.Include(u=>u.Make).Include(u=>u.Model).Include(u => u.Images).FirstOrDefault(u=>u.Id==id);
             
             if (vehicle == null)
             {
@@ -180,16 +180,29 @@ namespace CarAuction.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int? id)
         {
-            var obj = _db.Vehicles.Find(id);
-            if(obj == null)
+            var obj = _db.Vehicles.Include(u => u.Images).FirstOrDefault(u => u.Id == id);
+            if (obj == null)
             {
                 return NotFound();
             }
 
-            string path = "/Files/";
+            var vehicleImages = obj.Images.ToList();
+            if(vehicleImages.Count > 0)
+            {
+                foreach (var vehicleImage in vehicleImages)
+                {
+                    string fullPath = Path.Combine(_webHostEnvironment.WebRootPath, vehicleImage.ImagePath);
+                    if (System.IO.File.Exists(fullPath))
+                    {
+                        System.IO.File.Delete(fullPath);
+                    }
+                }
+            }
 
-            
-
+            foreach (var item in vehicleImages)
+            {
+                _db.VehicleImages.Remove(item);
+            }
 
             _db.Vehicles.Remove(obj);
             _db.SaveChanges();
