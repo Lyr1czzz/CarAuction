@@ -42,16 +42,7 @@ namespace CarAuction.Controllers
             if (id == null)
             {
                 //this is for create
-                var vehicleList = _db.Vehicles
-                .Include(u => u.Make)
-                .Include(u => u.Model)
-                .Include(u => u.Images)
-                .ToList();
-                foreach (var item in vehicleList)
-                {
-                    item.AuctionId = auctionVM.Auction.Id;
-                }
-                _db.SaveChanges();
+                
                 return View(auctionVM);
             }
             else
@@ -74,13 +65,23 @@ namespace CarAuction.Controllers
             {
                 if (auctionVM.Auction.Id == 0)
                 {
-                    // Создание нового объявления автомобиля
+                    // Создание нового аукциона
+                    var vehicleList = _db.Vehicles
+                .Include(u => u.Make)
+                .Include(u => u.Model)
+                .Include(u => u.Images)
+                .ToList();
+                    foreach (var item in vehicleList)
+                    {
+                        item.AuctionId = auctionVM.Auction.Id;
+                        item.Auction = auctionVM.Auction;
+                    }
                     _db.Add(auctionVM.Auction);
                     _db.SaveChanges();
                 }
                 else
                 {
-                    // Обновление существующего объявления
+                    // Обновление существующего аукциона
                     
                 }
                 return RedirectToAction("Index");

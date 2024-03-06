@@ -37,6 +37,8 @@
 
                     
                     <ul class="navbar-nav ml-auto">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Auction" asp-action="Index2">Auctions</a>
+
                         @if (User.IsInRole(WC.AdminRole))
                         {
                             <li class="nav-item dropdown">

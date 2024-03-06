@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarAuction.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240208174625_addNewFieldToBidAndUser")]
-    partial class addNewFieldToBidAndUser
+    [Migration("20240217121232_MakeAuctionIdNullable")]
+    partial class MakeAuctionIdNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,10 @@ namespace CarAuction.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AuctionDate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -113,7 +117,7 @@ namespace CarAuction.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AuctionId")
+                    b.Property<int?>("AuctionId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -405,9 +409,7 @@ namespace CarAuction.Migrations
                 {
                     b.HasOne("CarAuction.Models.Auction", "Auction")
                         .WithMany("Vehicles")
-                        .HasForeignKey("AuctionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AuctionId");
 
                     b.HasOne("CarAuction.Models.Make", "Make")
                         .WithMany()

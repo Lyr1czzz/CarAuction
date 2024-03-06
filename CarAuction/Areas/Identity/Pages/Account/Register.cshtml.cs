@@ -135,6 +135,7 @@ namespace WebApplication1.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+
                     if (User.IsInRole(WC.AdminRole))
                     {
                         //an admin has logged in and they try to create a new user

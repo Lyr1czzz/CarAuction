@@ -9,8 +9,8 @@ namespace CarAuction.Models
 
         public string AuctionDate { get; set; }
 
-        public virtual ICollection<Vehicle> Vehicles { get; set; }
+        public virtual List<Lot> Lots { get; set; }
 
-        public virtual List<Bid> Bids { get; set; }
+        public bool isActive { get; set; }
     }
 }
