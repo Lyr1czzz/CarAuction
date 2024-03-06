@@ -1,53 +1,87 @@
 ﻿@model CarAuction.Models.ViewModels.AuctionVM
 
 @{
-    var title = "Create Auction";
+    ViewData["Title"] = Model.Auction.Id != 0 ? "Edit Auction" : "Create Auction";
 }
 
-<form method="post" enctype="multipart/form-data">
-    @if (Model.Auction.Id != 0)
-    {
-        title = "Edit Auction";
-        <input asp-for="Auction.Id" hidden />
-    }
-    <div class="border p-3">
-        <div class="form-group row">
-            <h2 class="text-info p1-3">@title</h2>
-        </div>
-        <div class="row">
-            <div class="col-8">
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="Auction.AuctionDate"></label>
-                    </div>
-                    <div class="col-8">
-                        <input asp-for="Auction.AuctionDate" class="form-control" />
-                        <span asp-validation-for="Auction.AuctionDate" class="text-danger"></span>
-                    </div>
-                </div>
+<h2 class="text-info">@ViewData["Title"]</h2>
 
-                <div class="form-group row">
-                    <div class="col-8 offset-4 row">
-                        <div class="col">
-                            @if (Model.Auction.Id != 0)
-                            {
-                                //update
-                                <input type="submit" class="btn btn-success w-100" value="Update" />
-                            }
-                            else
-                            {
-                                //create
-                                <input type="submit" onclick="return validateInput()" class="btn btn-success w-100" value="Create" />
-                            }
-                        </div>
-                        <div class="col">
-                            <a asp-action="Index" class="btn btn-primary w-100">
-                                <i class="fa-solid fa-right-from-bracket"></i> Back
-                            </a>
-                        </div>
-                    </div>
-                </div>
+<form asp-action="SaveAuction" id="auctionForm" method="post">
+    <input type="hidden" asp-for="Auction.Id" />
+
+    <!-- Auction Date Field -->
+    <div class="form-group">
+        <label asp-for="Auction.AuctionDate"></label>
+        <input asp-for="Auction.AuctionDate" class="form-control" />
+        <span asp-validation-for="Auction.AuctionDate" class="text-danger"></span>
+    </div>
+
+    <div class="row">
+        <!-- Search Field -->
+        <div class="col-12 mb-3">
+            <input type="text" id="searchBox" class="form-control" placeholder="Search by ID">
+            <button type="button" id="searchButton" class="btn btn-secondary mt-2" onclick="searchVehicle()">Search</button>
+        </div>
+
+        <!-- Available Vehicles Displayed as Cards -->
+        <div class="col-6">
+            <h3>Available Vehicles</h3>
+            <div class="row" id="availableVehicles">
+                <!-- Vehicles will be added here dynamically -->
+            </div>
+        </div>
+
+        <!-- Selected Vehicles for Auction -->
+        <div class="col-6">
+            <h3>Selected Vehicles for Auction</h3>
+            <div id="selectedVehicles" class="row">
+                <!-- Selected vehicles will be added here -->
             </div>
         </div>
     </div>
+
+    <button type="submit" class="btn btn-success">@ViewData["Title"]</button>
+    <a asp-action="Index" class="btn btn-primary">Back</a>
 </form>
+@section Scripts {
+    <script>
+        function searchVehicle() {
+            var searchValue = document.getElementById('searchBox').value;
+            if (searchValue.trim() === '') {
+                alert('Please enter a vehicle ID.');
+                return;
+            }
+
+            fetch(`/Vehicles/SearchById/${searchValue}`)
+                .then(response => response.json())
+                .then(vehicle => {
+                    var vehiclesContainer = document.getElementById('availableVehicles');
+                    vehiclesContainer.innerHTML = ''; // Clear existing vehicles
+
+                    // Check if the vehicle is found
+                    if (vehicle) {
+                        var cardHtml = `
+                                    <div class="col-md-4">
+                                        <div class="card mb-4">
+                                            <img class="card-img-top" src="${vehicle.imageUrl}" alt="${vehicle.name}">
+                                            <div class="card-body">
+                                                <h5 class="card-title">${vehicle.name}</h5>
+                                                <p class="card-text">${vehicle.description}</p>
+                                                <button type="button" class="btn btn-primary" onclick="addVehicleToAuction(${vehicle.id})">Add</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                        vehiclesContainer.innerHTML = cardHtml;
+                    } else {
+                        vehiclesContainer.innerHTML = '<p>No vehicle found with the given ID.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching the vehicle:', error);
+                });
+        }
+
+        // Continue with the rest of your scripts...
+    </script>
+}
