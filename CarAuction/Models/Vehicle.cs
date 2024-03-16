@@ -30,11 +30,6 @@ namespace CarAuction.Models
         [ForeignKey("ModelId")]
         public virtual Model? Model { get; set; }
 
-        public int? AuctionId { get; set; }
-
-        [ForeignKey("AuctionId")]
-        public virtual Auction? Auction { get; set; }
-
         public virtual ICollection<VehicleImage>? Images { get; set; }
     }
 }

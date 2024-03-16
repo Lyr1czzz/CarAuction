@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace CarAuction.Controllers
 {
@@ -48,6 +49,7 @@ namespace CarAuction.Controllers
             else
             {
                 auctionVM.Auction = _db.Auctions.Find(id);
+                auctionVM.Auction.Lots = _db.Lots.Where(u => u.AuctionId == id).ToList();
                 if (auctionVM == null)
                 {
                     return NotFound();
@@ -59,86 +61,112 @@ namespace CarAuction.Controllers
         //Post - Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert([FromForm] AuctionVM auctionVM)
+        public IActionResult Upsert(AuctionVM model, string selectedVehicles, string selectedForDeleteVehicles)
         {
-            if (ModelState.IsValid)
-            {
-                if (auctionVM.Auction.Id == 0)
-                {
-                    // Создание нового аукциона
-                    var vehicleList = _db.Vehicles
+            // Десериализовываем ID выбранных машин
+            var selectVehicleIds = JsonConvert.DeserializeObject<List<int>>(selectedVehicles);
+            var deleteVehicleIds = JsonConvert.DeserializeObject<List<int>>(selectedForDeleteVehicles);
+            var auction = model.Auction;
+            var auctionVM = model;
+            auctionVM.Vehicles = _db.Vehicles
                 .Include(u => u.Make)
                 .Include(u => u.Model)
                 .Include(u => u.Images)
                 .ToList();
-                    foreach (var item in vehicleList)
-                    {
-                        item.AuctionId = auctionVM.Auction.Id;
-                        item.Auction = auctionVM.Auction;
-                    }
-                    _db.Add(auctionVM.Auction);
-                    _db.SaveChanges();
+
+            if (ModelState.IsValid)
+            {
+                // Если ID аукциона == 0, значит это новый аукцион
+                if (auction.Id == 0)
+                {
+                    // Создаём новый лот аукциона
+                    _db.Add(auction);
                 }
                 else
                 {
-                    // Обновление существующего аукциона
+                    // Обновляем существующий аукцион
+                    _db.Update(auction);
+
                     
                 }
-                return RedirectToAction("Index");
+
+                // Сохраняем изменения, чтобы получить ID для новых аукционов
+                _db.SaveChanges();
+
+                // Добавляем выбранные машины к аукциону
+                foreach (var vehicleId in selectVehicleIds)
+                {
+                    _db.Lots.Add(new Lot
+                    {
+                        VehicleId = vehicleId,
+                        AuctionId = auction.Id // используем ID только что созданного или обновленного аукциона
+                    });
+                }
+
+                foreach (var vehicleId in deleteVehicleIds)
+                {
+                    foreach (var lot in _db.Lots.Where(u=>u.Id == vehicleId))
+                    {
+                        if(lot.Bids != null)
+                        foreach (var bid in lot.Bids)
+                        {
+                            _db.Bids.Remove(bid);
+                        }
+                        _db.Lots.Remove(lot);
+                    }
+                }
+
+                // Подтверждаем изменения в базе данных
+                _db.SaveChanges();
+
+                // Перенаправляем пользователя на страницу с информацией о аукционе или на другой маршрут
+                return RedirectToAction("Index"); // Замените "Index" на нужное название отображаемой страницы после создания аукциона
             }
-            
+
+            // Если форма не валидна, покажем её снова с текущими значениями
             return View(auctionVM);
         }
 
-        ////Get - Delete
-        //public IActionResult Delete(int? id)
-        //{
-        //    if (id == null || id == 0)
-        //    {
-        //        return NotFound();
-        //    }
+        //Get - Delete
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
 
-        //    Vehicle vehicle = _db.Vehicles.Include(u=>u.Make).Include(u=>u.Model).Include(u => u.Images).FirstOrDefault(u=>u.Id==id);
+            Auction auction = _db.Auctions.Include(u => u.Lots).FirstOrDefault(u => u.Id == id);
 
-        //    if (vehicle == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(vehicle);
-        //}
+            if (auction == null)
+            {
+                return NotFound();
+            }
+            return View(auction);
+        }
 
-        ////Post - Delete
-        //[HttpPost,ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult DeletePost(int? id)
-        //{
-        //    var obj = _db.Vehicles.Include(u => u.Images).FirstOrDefault(u => u.Id == id);
-        //    if (obj == null)
-        //    {
-        //        return NotFound();
-        //    }
+        //Post - Delete
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int? id)
+        {
+            var obj = _db.Auctions.Include(u => u.Lots).FirstOrDefault(u => u.Id == id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
 
-        //    var vehicleImages = obj.Images.ToList();
-        //    if(vehicleImages.Count > 0)
-        //    {
-        //        foreach (var vehicleImage in vehicleImages)
-        //        {
-        //            string fullPath = Path.Combine(_webHostEnvironment.WebRootPath, vehicleImage.ImagePath);
-        //            if (System.IO.File.Exists(fullPath))
-        //            {
-        //                System.IO.File.Delete(fullPath);
-        //            }
-        //        }
-        //    }
+            foreach (var item in obj.Lots)
+            {
+                foreach (var bid in item.Bids)
+                {
+                    _db.Bids.Remove(bid);
+                }
+                _db.Lots.Remove(item);
+            }
 
-        //    foreach (var item in vehicleImages)
-        //    {
-        //        _db.VehicleImages.Remove(item);
-        //    }
-
-        //    _db.Vehicles.Remove(obj);
-        //    _db.SaveChanges();
-        //    return RedirectToAction("Index");
-        //}       
+            _db.Auctions.Remove(obj);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }

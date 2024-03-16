@@ -6,6 +6,6 @@ namespace CarAuction.Models.ViewModels
     {
         public Auction Auction { get; set; }
 
-        public IEnumerable<Vehicle>? Vehicles { get; set; }
+        public List<Vehicle>? Vehicles { get; set; }
     }
 }

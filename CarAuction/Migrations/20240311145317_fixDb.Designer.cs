@@ -4,6 +4,7 @@ using CarAuction.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarAuction.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240311145317_fixDb")]
+    partial class fixDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -145,6 +148,9 @@ namespace CarAuction.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("AuctionId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -166,6 +172,8 @@ namespace CarAuction.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuctionId");
 
                     b.HasIndex("MakeId");
 
@@ -449,6 +457,10 @@ namespace CarAuction.Migrations
 
             modelBuilder.Entity("CarAuction.Models.Vehicle", b =>
                 {
+                    b.HasOne("CarAuction.Models.Auction", "Auction")
+                        .WithMany()
+                        .HasForeignKey("AuctionId");
+
                     b.HasOne("CarAuction.Models.Make", "Make")
                         .WithMany()
                         .HasForeignKey("MakeId")
@@ -460,6 +472,8 @@ namespace CarAuction.Migrations
                         .HasForeignKey("ModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Auction");
 
                     b.Navigation("Make");
 
