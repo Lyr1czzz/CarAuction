@@ -105,6 +105,9 @@
     <!-- Hidden field for selected vehicles -->
     <input type="hidden" id="selectedVehiclesInput" name="SelectedVehicles" />
     <input type="hidden" id="selectedForDeleteVehiclesInput" name="SelectedForDeleteVehicles" />
+    <input type="hidden" name="AuctionIsOn" value="false" id="AuctionIsOnField" />
+
+    <button type="submit" onclick="setAuctionState()">Start Auction</button>
 
     <button type="submit" class="btn btn-success">Upsert</button>
     <a asp-action="Index" class="btn btn-primary">Back to List</a>
@@ -134,6 +137,12 @@
                 });
             });
         });
+
+        function setAuctionState() {
+            var auctionIsOnField = document.getElementById("AuctionIsOnField");
+            var currentState = auctionIsOnField.value.toLowerCase() === "true";
+            auctionIsOnField.value = !currentState;
+        }
 
         function deleteVehicleForAuction(vehicleId, button) {
             // Adding or removing vehicle from deletedVehicles

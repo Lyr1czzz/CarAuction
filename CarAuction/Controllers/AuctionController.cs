@@ -26,6 +26,13 @@ namespace CarAuction.Controllers
             return View(auctionList);
         }
 
+        public IActionResult Index2()
+        {
+            var auctionList = _db.Auctions.Where(u=>u.isActive == true).ToList();
+
+            return View(auctionList);
+        }
+
         //Get - Upsert
         public IActionResult Upsert(int? id)
         {
@@ -61,12 +68,13 @@ namespace CarAuction.Controllers
         //Post - Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(AuctionVM model, string selectedVehicles, string selectedForDeleteVehicles)
+        public IActionResult Upsert(AuctionVM model, string selectedVehicles, string selectedForDeleteVehicles, bool AuctionIsOn)
         {
             // Десериализовываем ID выбранных машин
             var selectVehicleIds = JsonConvert.DeserializeObject<List<int>>(selectedVehicles);
             var deleteVehicleIds = JsonConvert.DeserializeObject<List<int>>(selectedForDeleteVehicles);
             var auction = model.Auction;
+            auction.isActive = AuctionIsOn;
             var auctionVM = model;
             auctionVM.Vehicles = _db.Vehicles
                 .Include(u => u.Make)
@@ -115,6 +123,7 @@ namespace CarAuction.Controllers
                         _db.Lots.Remove(lot);
                     }
                 }
+
 
                 // Подтверждаем изменения в базе данных
                 _db.SaveChanges();
