@@ -3,8 +3,24 @@
 <div class="container">
     <div class="row">
         <div class="col-md-3 mb-3">
-            <h4>Filters</h4>
             <div class="accordion" id="filterAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="priceHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#priceCollapse" aria-expanded="false" aria-controls="priceCollapse">
+                            Price Range
+                        </button>
+                    </h2>
+                    <div id="priceCollapse" class="accordion-collapse collapse" aria-labelledby="priceHeading">
+                        <div class="accordion-body">
+                            <label for="priceRangeMin" class="form-label">Min Price: <span id="minPriceLabel">0</span></label>
+                            <input type="range" class="form-range" min="0" max="50000" id="priceRangeMin" value="0">
+
+                            <label for="priceRangeMax" class="form-label">Max Price: <span id="maxPriceLabel">50,000</span></label>
+                            <input type="range" class="form-range" min="0" max="50000" id="priceRangeMax" value="50000">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="makeHeading">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#makeCollapse" aria-expanded="true" aria-controls="makeCollapse">
@@ -26,6 +42,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="modelHeading">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#modelCollapse" aria-expanded="false" aria-controls="modelCollapse">
@@ -47,6 +64,8 @@
                         </div>
                     </div>
                 </div>
+                <!-- зкшсу-->
+                
                 <!-- Add more accordion items here for additional filters if needed -->
             </div>
         </div>
@@ -115,6 +134,57 @@
 
             // Привязываем функцию фильтрации к событию 'change' каждого флажка
             $('#makeCollapse .form-check-input, #modelCollapse .form-check-input').on('change', filterList);
+        });
+
+        $(document).ready(function () {
+            var $min = $('#priceRangeMin');
+            var $max = $('#priceRangeMax');
+            var $minLabel = $('#minPriceLabel');
+            var $maxLabel = $('#maxPriceLabel');
+
+            function updateLabels() {
+                $minLabel.text(parseInt($min.val()).toLocaleString());
+                $maxLabel.text(parseInt($max.val()).toLocaleString());
+            }
+
+            function filterList() {
+                // Получаем выбранные значения фильтров (марки и модели) ...
+
+                // Получаем диапазон цен из ползунков
+                var minPrice = parseInt($min.val(), 10);
+                var maxPrice = parseInt($max.val(), 10);
+
+                // Обновляем значения меток минимальной и максимальной цены
+                updateLabels();
+
+                // Применяем фильтрацию к карточкам
+                $(".filter").each(function () {
+                    // Проверки выбранных марок и моделей...
+
+                    // Проверяем попадание цены карточки в выбранный диапазон
+                    var price = parseInt($(this).data('price'), 10);
+                    var priceMatch = (price >= minPrice) && (price <= maxPrice);
+
+                    // Решаем, показывать карточку или скрыть
+                    $(this).toggle(makeMatch && modelMatch && priceMatch);
+                });
+            }
+
+            // Проверяем значения ползунков, чтобы избежать перекрещивания
+            function checkSliders() {
+                if (parseInt($min.val()) > parseInt($max.val())) {
+                    $min.val($max.val());
+                    $max.val($min.val());
+                }
+                filterList();
+            }
+
+            // Привязываем функцию фильтрации к событиям изменения ползунков и флажков
+            $('#makeCollapse .form-check-input, #modelCollapse .form-check-input').on('change', filterList);
+            $min.on('input change', checkSliders);
+            $max.on('input change', checkSliders);
+
+            updateLabels();
         });
     </script>
 }
