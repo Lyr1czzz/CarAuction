@@ -2,7 +2,7 @@
 
 namespace CarAuction.Data.Enums
 {
-    public enum Vehicle_Condition_Type
+    public enum Vehicle_Key
     {
         Run_and_Drive = 1,
         Starts,

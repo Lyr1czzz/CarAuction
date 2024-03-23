@@ -23,6 +23,8 @@ namespace CarAuction.Data
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Bid> Bids { get; set; }
         public DbSet<Lot> Lots { get; set; }
+        public DbSet<Series> Series { get; set; }
+        public DbSet<Engine> Engines { get; set; }
         public DbSet<Auction> Auctions { get; set; }
     }
 }

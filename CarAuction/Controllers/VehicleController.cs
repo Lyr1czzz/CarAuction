@@ -26,6 +26,8 @@ namespace CarAuction.Controllers
                                  .Include(u => u.Make)
                                  .Include(u => u.Model)
                                  .Include(u => u.Images)
+                                 .Include(u => u.Series)
+                                 .Include(u => u.Engine)
                                  .ToList(); // Чтобы вызвать исключение здесь, если есть проблемы с запросом
 
             return View(vehicleList);
@@ -43,6 +45,16 @@ namespace CarAuction.Controllers
                     Value = i.Id.ToString(),
                 }),
                 ModelSelectList = _db.Models.Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString(),
+                }),
+                SeriesSelectList = _db.Series.Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString(),
+                }),
+                EngineSelectList = _db.Series.Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString(),

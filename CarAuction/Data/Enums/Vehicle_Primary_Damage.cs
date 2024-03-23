@@ -2,7 +2,7 @@
 
 namespace CarAuction.Data.Enums
 {
-    public enum Vehicle_Type
+    public enum Vehicle_Primary_Damage
     {
         Automobiles = 1,
     }

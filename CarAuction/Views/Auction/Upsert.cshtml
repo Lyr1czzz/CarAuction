@@ -107,9 +107,8 @@
     <input type="hidden" id="selectedForDeleteVehiclesInput" name="SelectedForDeleteVehicles" />
     <input type="hidden" name="AuctionIsOn" value="false" id="AuctionIsOnField" />
 
-    <button type="submit" onclick="setAuctionState()">Start Auction</button>
-
     <button type="submit" class="btn btn-success">Upsert</button>
+    <button type="submit" class="btn btn-success" onclick="setAuctionState()">Start Auction</button>
     <a asp-action="Index" class="btn btn-primary">Back to List</a>
 </form>
 
