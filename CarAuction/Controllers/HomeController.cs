@@ -23,7 +23,12 @@ namespace CarAuction.Controllers
         {
             HomeVM homeVM = new HomeVM()
             {
-                Vehicles = _db.Vehicles.Include(u => u.Make).Include(u => u.Model).Include(u => u.Images),
+                Vehicles = _db.Vehicles
+                .Include(u => u.Make)
+                .Include(u => u.Model)
+                .Include(u => u.Series)
+                .Include(u => u.Engine)
+                .Include(u => u.Images),
                 Makes = _db.Makes,
                 Models = _db.Models
             };
@@ -40,7 +45,14 @@ namespace CarAuction.Controllers
 
             DetailsVM detailsVM = new DetailsVM()
             {
-                Vehicle = _db.Vehicles.Include(u => u.Make).Include(u => u.Model).Include(u => u.Images).Where(u => u.Id == id).FirstOrDefault(),
+                Vehicle = _db.Vehicles
+                .Include(u => u.Make)
+                .Include(u => u.Model)
+                .Include(u => u.Images)
+                .Include(u => u.Series)
+                .Include(u => u.Engine)
+                .Where(u => u.Id == id)
+                .FirstOrDefault(),
                 ExistsInCard = false,
             };
 

@@ -1,18 +1,13 @@
-﻿@using CarAuction.Models
-@model Vehicle
+﻿@model CarAuction.Models.Vehicle
 
-<div class="col-lg-4 col-md-6 mb-4 filter @(Model.Make.Name.Replace(" ", "_")) @(Model.Model.Name.Replace(" ", "_"))">
-    <div class="card h-100 shadow-sm" onclick="window.location.href='@Url.Action("Details", "ControllerName", new { id = Model.Id })';" style="cursor:pointer;">
-        <img src="@Url.Content(Model.Images.FirstOrDefault()?.ImagePath ?? "путь_к_изображению_заполнителю")" class="card-img-top" alt="Image of @Model.Make.Name @Model.Model.Name">
+<div class="col-lg-4 col-md-6 filter @(Model.Make.Name.Replace(" ", "_")) @(Model.Model.Name.Replace(" ", "_"))">
+    <div class="card h-100 shadow-sm" onclick="window.location.href='@Url.Action("Details", "Home", new { id = Model.Id })'">
+        <img src="@Url.Content(Model.Images.FirstOrDefault()?.ImagePath ?? "путь_к_изображению_заполнителю")" class="card-img-top" alt="@Model.Year @Model.Make.Name @Model.Model.Name">
         <div class="card-body">
-            <h5 class="card-title text-truncate">@Model.Year @Model.Make.Name @Model.Model.Name @Model.Series.Name</h5>
-            <hr>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item px-2 d-flex justify-content-between">
-                    <strong>Цена:</strong>
-                    <strong>@Model.Price BYN</strong>
-                </li>
-            </ul>
+            <p class="mb-2">@Model.Year @Model.Make.Name @Model.Model.Name @Model.Series.Name</p>
+            <p class="mb-2">Лот #@Model.Id</p>
+            <p class="mb-2">Расположение: Минск</p>
+            <p class="mb-0">Цена: @Model.Price BYN</p>
         </div>
     </div>
 </div>

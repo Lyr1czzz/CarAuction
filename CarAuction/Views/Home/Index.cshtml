@@ -1,96 +1,53 @@
 ﻿@model CarAuction.Models.ViewModels.HomeVM
 
-<style>
-    .arrow {
-        position: absolute;
-        right: 10px;
-        width: 10px;
-        height: 10px;
-        border-top: 2px solid black;
-        border-right: 2px solid black;
-        transition: transform 0.3s;
-        transform: rotate(45deg);
-    }
-
-    .arrow.open {
-        transform: rotate(225deg);
-    }
-
-    .manufacturer-list,
-    .model-list {
-        max-height: 200px;
-        overflow-y: auto;
-    }
-
-    .detail-area {
-        background-color: white;
-        border: 1px solid #e3e3e3;
-        border-radius: 5px;
-        padding: 15px;
-        margin-bottom: 10px;
-    }
-</style>
-
 <div class="container">
     <div class="row">
-        <div class="detail-area col-md-3">
+        <div class="col-md-3 mb-3">
             <h4>Filters</h4>
-            <div class="card border-0">
-                <div class="card-header p-2" id="makeHeading">
-                    <h5 class="mb-0">
-                        <button class="btn collapsed" type="button" data-toggle="collapse" data-target="#makeCollapse" aria-expanded="false" aria-controls="makeCollapse">
+            <div class="accordion" id="filterAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="makeHeading">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#makeCollapse" aria-expanded="true" aria-controls="makeCollapse">
                             Makes
-                            <span class="arrow"></span>
                         </button>
-                    </h5>
-                </div>
-
-                <div id="makeCollapse" class="collapse" aria-labelledby="makeHeading">
-                    <div class="card-body px-2 py-3">
-                        <form id="makeFilterForm">
-                            <div class="form-group">
-                                <input type="text" id="makeSearchInput" class="form-control mb-2" placeholder="Search makes">
+                    </h2>
+                    <div id="makeCollapse" class="accordion-collapse collapse show" aria-labelledby="makeHeading">
+                        <div class="accordion-body">
+                            <input type="text" id="makeSearchInput" class="form-control mb-2" placeholder="Search makes">
+                            <div class="list-group overflow-auto" style="max-height: 200px;">
+                                @foreach (var make in Model.Makes)
+                                {
+                                    <div class="list-group-item border-0">
+                                        <input class="form-check-input me-1" type="checkbox" id="@make.Name.Replace(' ', '_')" value="@make.Name.Replace(' ', '_')">
+                                        <label class="form-check-label" for="@make.Name.Replace(' ', '_')">@make.Name</label>
+                                    </div>
+                                }
                             </div>
-                        </form>
-                        <div class="card-body manufacturer-list">
-                            @foreach (var make in Model.Makes)
-                            {
-                                <div class="form-check">
-                                    <input class="form-check-input make-checkbox" type="checkbox" id="@make.Name.Replace(' ', '_')" value="@make.Name.Replace(' ', '_')">
-                                    <label class="form-check-label" for="@make.Name.Replace(' ', '_')">@make.Name</label>
-                                </div>
-                            }
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="card border-0 mt-3">
-                <div class="card-header p-2" id="modelHeading">
-                    <h5 class="mb-0">
-                        <button class="btn collapsed" type="button" data-toggle="collapse" data-target="#modelCollapse" aria-expanded="false" aria-controls="modelCollapse">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="modelHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#modelCollapse" aria-expanded="false" aria-controls="modelCollapse">
                             Models
-                            <span class="arrow"></span>
                         </button>
-                    </h5>
-                </div>
-
-                <div id="modelCollapse" class="collapse" aria-labelledby="modelHeading">
-                    <div class="card-body px-2 py-3">
-                        <form id="modelFilterForm">
+                    </h2>
+                    <div id="modelCollapse" class="accordion-collapse collapse" aria-labelledby="modelHeading">
+                        <div class="accordion-body">
                             <input type="text" id="modelSearchInput" class="form-control mb-2" placeholder="Search models">
-                        </form>
-                        <div class="card-body model-list">
-                            @foreach (var item in Model.Models)
-                            {
-                                <div class="form-check">
-                                    <input class="form-check-input model-checkbox" type="checkbox" id="@item.Name.Replace(' ', '_')" value="@item.Name.Replace(' ', '_')">
-                                    <label class="form-check-label" for="@item.Name.Replace(' ', '_')">@item.Name</label>
-                                </div>
-                            }
+                            <div class="list-group overflow-auto" style="max-height: 200px;">
+                                @foreach (var item in Model.Models)
+                                {
+                                    <div class="list-group-item border-0">
+                                        <input class="form-check-input me-1" type="checkbox" id="@item.Name.Replace(' ', '_')" value="@item.Name.Replace(' ', '_')">
+                                        <label class="form-check-label" for="@item.Name.Replace(' ', '_')">@item.Name</label>
+                                    </div>
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
+                <!-- Add more accordion items here for additional filters if needed -->
             </div>
         </div>
 
@@ -107,61 +64,57 @@
 
 @section Scripts {
     <script>
+        // Функция фильтрации списка на основе ввода пользователя
+        function filterList(searchInputSelector, listSelector) {
+            var searchValue = $(searchInputSelector).val().toLowerCase();
+            $(listSelector + " .list-group-item").each(function () {
+                var itemName = $(this).text().trim().toLowerCase();
+                if (itemName.indexOf(searchValue) !== -1) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
         $(document).ready(function () {
-            $(".make-checkbox, .model-checkbox").change(function () {
-                applyFilters();
-            });
-
-            $(".card-header").click(function () {
-                var collapseElement = $(this).closest(".card").find(".collapse");
-                var arrowElement = $(this).find(".arrow");
-
-                collapseElement.collapse("toggle");
-                arrowElement.toggleClass("open");
-            });
-
+            // Привязываем функцию filterList к событию 'input' для полей поиска
             $("#makeSearchInput").on("input", function () {
-                filterList($(this).val().toLowerCase(), ".manufacturer-list");
+                filterList("#makeSearchInput", "#makeCollapse .list-group");
             });
 
             $("#modelSearchInput").on("input", function () {
-                filterList($(this).val().toLowerCase(), ".model-list");
+                filterList("#modelSearchInput", "#modelCollapse .list-group");
             });
 
-            function filterList(searchValue, listSelector) {
-                $(listSelector + " .form-check").each(function () {
-                    var itemName = $(this).text().trim().toLowerCase();
-                    if (itemName.indexOf(searchValue) === -1) {
-                        $(this).hide();
-                    } else {
-                        $(this).show();
-                    }
+            // ... Оставшийся код обработчиков событий ...
+        });
+
+        $(document).ready(function () {
+            function filterList() {
+                // Получаем выбранные значения фильтров
+                // Собираем выбранные марки
+                var checkedMakes = $('#makeCollapse .form-check-input:checked').map(function () {
+                    return $(this).val();
+                }).get();
+
+                // Собираем выбранные модели
+                var checkedModels = $('#modelCollapse .form-check-input:checked').map(function () {
+                    return $(this).val();
+                }).get();
+
+                // Применяем фильтрацию к карточкам
+                $(".filter").each(function () {
+                    var makeMatch = !checkedMakes.length || checkedMakes.some(make => $(this).hasClass(make));
+                    var modelMatch = !checkedModels.length || checkedModels.some(model => $(this).hasClass(model));
+
+                    // Решаем, показывать карточку или скрыть
+                    $(this).toggle(makeMatch && modelMatch);
                 });
             }
 
-            function applyFilters() {
-                var selectedMakes = $(".make-checkbox:checked").map(function () {
-                    return "." + $(this).val();
-                }).get();
-
-                var selectedModels = $(".model-checkbox:checked").map(function () {
-                    return "." + $(this).val();
-                }).get();
-
-                if (selectedMakes.length > 0 || selectedModels.length > 0) {
-                    $(".filter").hide();
-
-                    if (selectedMakes.length > 0 && selectedModels.length > 0) {
-                        $(selectedMakes.join(", ")).filter(selectedModels.join(", ")).show();
-                    } else if (selectedMakes.length > 0) {
-                        $(selectedMakes.join(", ")).show();
-                    } else {
-                        $(selectedModels.join(", ")).show();
-                    }
-                } else {
-                    $(".filter").show();
-                }
-            }
+            // Привязываем функцию фильтрации к событию 'change' каждого флажка
+            $('#makeCollapse .form-check-input, #modelCollapse .form-check-input').on('change', filterList);
         });
     </script>
 }

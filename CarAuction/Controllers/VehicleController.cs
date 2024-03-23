@@ -54,7 +54,7 @@ namespace CarAuction.Controllers
                     Text = i.Name,
                     Value = i.Id.ToString(),
                 }),
-                EngineSelectList = _db.Series.Select(i => new SelectListItem
+                EngineSelectList = _db.Engines.Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString(),
@@ -171,7 +171,7 @@ namespace CarAuction.Controllers
                 Text = i.Name,
                 Value = i.Id.ToString(),
             });
-            vehicleVM.EngineSelectList = _db.Series.Select(i => new SelectListItem
+            vehicleVM.EngineSelectList = _db.Engines.Select(i => new SelectListItem
             {
                 Text = i.Name,
                 Value = i.Id.ToString(),
