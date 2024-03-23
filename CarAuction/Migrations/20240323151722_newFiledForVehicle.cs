@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CarAuction.Migrations
 {
     /// <inheritdoc />
-    public partial class m5 : Migration
+    public partial class newFiledForVehicle : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,11 +58,25 @@ namespace CarAuction.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AuctionDate = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    AuctionDate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    isActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Auctions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Engines",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Engines", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -90,6 +104,19 @@ namespace CarAuction.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Models", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Series",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Series", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -199,53 +226,39 @@ namespace CarAuction.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bids",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AuctionId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Amount = table.Column<double>(type: "float", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Bids", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Bids_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Bids_Auctions_AuctionId",
-                        column: x => x.AuctionId,
-                        principalTable: "Auctions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Vehicles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Mileage = table.Column<int>(type: "int", nullable: false),
+                    VIN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Odometer = table.Column<int>(type: "int", nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: false),
+                    AirBags = table.Column<int>(type: "int", nullable: false),
+                    BodyStyle = table.Column<int>(type: "int", nullable: false),
+                    DriveLineType = table.Column<int>(type: "int", nullable: false),
+                    Exterior = table.Column<int>(type: "int", nullable: false),
+                    FuelType = table.Column<int>(type: "int", nullable: false),
+                    Interior = table.Column<int>(type: "int", nullable: false),
+                    Key = table.Column<int>(type: "int", nullable: false),
+                    Loss = table.Column<int>(type: "int", nullable: false),
+                    PrimaryDamage = table.Column<int>(type: "int", nullable: false),
+                    SecondaryDamage = table.Column<int>(type: "int", nullable: false),
+                    StartCode = table.Column<int>(type: "int", nullable: false),
+                    Transmission = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
+                    EngineId = table.Column<int>(type: "int", nullable: false),
+                    SeriesId = table.Column<int>(type: "int", nullable: false),
                     MakeId = table.Column<int>(type: "int", nullable: false),
-                    ModelId = table.Column<int>(type: "int", nullable: false),
-                    AuctionId = table.Column<int>(type: "int", nullable: false)
+                    ModelId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Vehicles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Vehicles_Auctions_AuctionId",
-                        column: x => x.AuctionId,
-                        principalTable: "Auctions",
+                        name: "FK_Vehicles_Engines_EngineId",
+                        column: x => x.EngineId,
+                        principalTable: "Engines",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -258,6 +271,40 @@ namespace CarAuction.Migrations
                         name: "FK_Vehicles_Models_ModelId",
                         column: x => x.ModelId,
                         principalTable: "Models",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Vehicles_Series_SeriesId",
+                        column: x => x.SeriesId,
+                        principalTable: "Series",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Lots",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    VehicleId = table.Column<int>(type: "int", nullable: false),
+                    AuctionId = table.Column<int>(type: "int", nullable: false),
+                    FinalCost = table.Column<int>(type: "int", nullable: false),
+                    isSaled = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lots", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Lots_Auctions_AuctionId",
+                        column: x => x.AuctionId,
+                        principalTable: "Auctions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Lots_Vehicles_VehicleId",
+                        column: x => x.VehicleId,
+                        principalTable: "Vehicles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -280,6 +327,32 @@ namespace CarAuction.Migrations
                         principalTable: "Vehicles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Bids",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Amount = table.Column<double>(type: "float", nullable: false),
+                    AuctionDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LotId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bids", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bids_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Bids_Lots_LotId",
+                        column: x => x.LotId,
+                        principalTable: "Lots",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -322,14 +395,24 @@ namespace CarAuction.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bids_ApplicationUserId",
+                name: "IX_Bids_LotId",
                 table: "Bids",
-                column: "ApplicationUserId");
+                column: "LotId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bids_AuctionId",
+                name: "IX_Bids_UserId",
                 table: "Bids",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lots_AuctionId",
+                table: "Lots",
                 column: "AuctionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lots_VehicleId",
+                table: "Lots",
+                column: "VehicleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_VehicleImages_VehicleId",
@@ -337,9 +420,9 @@ namespace CarAuction.Migrations
                 column: "VehicleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vehicles_AuctionId",
+                name: "IX_Vehicles_EngineId",
                 table: "Vehicles",
-                column: "AuctionId");
+                column: "EngineId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vehicles_MakeId",
@@ -350,6 +433,11 @@ namespace CarAuction.Migrations
                 name: "IX_Vehicles_ModelId",
                 table: "Vehicles",
                 column: "ModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vehicles_SeriesId",
+                table: "Vehicles",
+                column: "SeriesId");
         }
 
         /// <inheritdoc />
@@ -383,16 +471,25 @@ namespace CarAuction.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Vehicles");
+                name: "Lots");
 
             migrationBuilder.DropTable(
                 name: "Auctions");
+
+            migrationBuilder.DropTable(
+                name: "Vehicles");
+
+            migrationBuilder.DropTable(
+                name: "Engines");
 
             migrationBuilder.DropTable(
                 name: "Makes");
 
             migrationBuilder.DropTable(
                 name: "Models");
+
+            migrationBuilder.DropTable(
+                name: "Series");
         }
     }
 }

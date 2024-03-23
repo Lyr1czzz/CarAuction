@@ -5,27 +5,49 @@
 }
 
 <form method="post" enctype="multipart/form-data">
-    @if(Model.Vehicle.Id != 0)
+    @if (Model.Vehicle.Id != 0)
     {
         title = "Edit Vehicle";
         <input asp-for="Vehicle.Id" hidden />
     }
     <div class="border p-3">
-        <div class="form-group row">
+        <div class="form-group row mb-3">
             <h2 class="text-info p1-3">@title</h2>
         </div>
         <div class="row">
             <div class="col-8">
-                <div class="form-group row">
+
+                <div class="form-group row mb-3">
                     <div class="col-4">
-                        <label asp-for="Vehicle.Name"></label>
+                        <label asp-for="Vehicle.VIN"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="Vehicle.Name" class="form-control" />
-                        <span asp-validation-for="Vehicle.Name" class="text-danger"></span>
+                        <input asp-for="Vehicle.VIN" class="form-control" />
+                        <span asp-validation-for="Vehicle.VIN" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="form-group row">
+
+                <div class="form-group row mb-3">
+                    <div class="col-4">
+                        <label asp-for="Vehicle.Year"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="Vehicle.Year" class="form-control" />
+                        <span asp-validation-for="Vehicle.Year" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <div class="col-4">
+                        <label asp-for="Vehicle.Odometer"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="Vehicle.Odometer" class="form-control" />
+                        <span asp-validation-for="Vehicle.Odometer" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
                     <div class="col-4">
                         <label asp-for="Vehicle.Price"></label>
                     </div>
@@ -34,26 +56,8 @@
                         <span asp-validation-for="Vehicle.Price" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="Vehicle.Mileage"></label>
-                    </div>
-                    <div class="col-8">
-                        <input asp-for="Vehicle.Mileage" class="form-control" />
-                        <span asp-validation-for="Vehicle.Mileage" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="Vehicle.Description"></label>
-                    </div>
-                    <div class="col-8">
-                        <textarea asp-for="Vehicle.Description" class="form-control summernote"></textarea>
-                        <span asp-validation-for="Vehicle.Description" class="text-danger"></span>
-                    </div>
-                </div>
 
-                <div class="form-group row">
+                <div class="form-group row mb-3">
                     <div class="col-4">
                         Image
                     </div>
@@ -62,7 +66,7 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
+                <div class="form-group row mb-3">
                     <div class="col-4">
                         <label asp-for="Vehicle.MakeId"></label>
                     </div>
@@ -72,9 +76,9 @@
                         </select>
                         <span asp-validation-for="Vehicle.MakeId" class="text-danger"></span>
                     </div>
-                </div> 
+                </div>
 
-                <div class="form-group row">
+                <div class="form-group row mb-3">
                     <div class="col-4">
                         <label asp-for="Vehicle.ModelId"></label>
                     </div>
@@ -86,17 +90,39 @@
                     </div>
                 </div>
 
+                <div class="form-group row mb-3">
+                    <div class="col-4">
+                        <label asp-for="Vehicle.SeriesId"></label>
+                    </div>
+                    <div class="col-8">
+                        <select asp-for="Vehicle.SeriesId" asp-items="@Model.SeriesSelectList" class="form-control">
+                            <option disabled selected>--Select Series--</option>
+                        </select>
+                        <span asp-validation-for="Vehicle.SeriesId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <div class="col-4">
+                        <label asp-for="Vehicle.EngineId"></label>
+                    </div>
+                    <div class="col-8">
+                        <select asp-for="Vehicle.EngineId" asp-items="@Model.EngineSelectList" class="form-control">
+                            <option disabled selected>--Select Engine--</option>
+                        </select>
+                        <span asp-validation-for="Vehicle.EngineId" class="text-danger"></span>
+                    </div>
+                </div>
+
                 <div class="form-group row">
-                    <div class="col-8 offset-4 row">
+                    <div class="col-8 offset-4 row mb-3">
                         <div class="col">
                             @if (Model.Vehicle.Id != 0)
                             {
-                                //update
                                 <input type="submit" class="btn btn-success w-100" value="Update" />
                             }
                             else
                             {
-                                //create
                                 <input type="submit" onclick="return validateInput()" class="btn btn-success w-100" value="Create" />
                             }
                         </div>
@@ -107,12 +133,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-4 pt-4">
-                @if(Model.Vehicle.Id != 0)
-                {
-                    @* <img src="@Url.Content("../../"+@Model.Vehicle.Path)" width="100%" style="border-radius:5px; border:1px solid #bbb"> *@
-                }
             </div>
         </div>
     </div>
@@ -125,7 +145,7 @@
     <script>
         $(document).ready(function () {
             $('.summernote').summernote({
-                height:250
+                height: 250
             });
         });
 
@@ -133,7 +153,7 @@
             if (document.getElementById("uploadBox").value == "") {
                 Swal.fire({
                     title: "Error!",
-                    text: "Please upload an Image1!",
+                    text: "Please upload an Image!",
                     icon: "error"
                 });
                 return false;

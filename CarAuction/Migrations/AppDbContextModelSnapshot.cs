@@ -71,6 +71,23 @@ namespace CarAuction.Migrations
                     b.ToTable("Bids");
                 });
 
+            modelBuilder.Entity("CarAuction.Models.Engine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Engines");
+                });
+
             modelBuilder.Entity("CarAuction.Models.Lot", b =>
                 {
                     b.Property<int>("Id")
@@ -137,6 +154,23 @@ namespace CarAuction.Migrations
                     b.ToTable("Models");
                 });
 
+            modelBuilder.Entity("CarAuction.Models.Series", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Series");
+                });
+
             modelBuilder.Entity("CarAuction.Models.Vehicle", b =>
                 {
                     b.Property<int>("Id")
@@ -145,31 +179,76 @@ namespace CarAuction.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MakeId")
+                    b.Property<int>("AirBags")
                         .HasColumnType("int");
 
-                    b.Property<int>("Mileage")
+                    b.Property<int>("BodyStyle")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DriveLineType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EngineId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Exterior")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FuelType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Interior")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Key")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Loss")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MakeId")
                         .HasColumnType("int");
 
                     b.Property<int>("ModelId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Odometer")
+                        .HasColumnType("int");
 
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
+                    b.Property<int>("PrimaryDamage")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SecondaryDamage")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeriesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StartCode")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Transmission")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VIN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("EngineId");
 
                     b.HasIndex("MakeId");
 
                     b.HasIndex("ModelId");
+
+                    b.HasIndex("SeriesId");
 
                     b.ToTable("Vehicles");
                 });
@@ -449,6 +528,12 @@ namespace CarAuction.Migrations
 
             modelBuilder.Entity("CarAuction.Models.Vehicle", b =>
                 {
+                    b.HasOne("CarAuction.Models.Engine", "Engine")
+                        .WithMany()
+                        .HasForeignKey("EngineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CarAuction.Models.Make", "Make")
                         .WithMany()
                         .HasForeignKey("MakeId")
@@ -461,9 +546,19 @@ namespace CarAuction.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CarAuction.Models.Series", "Series")
+                        .WithMany()
+                        .HasForeignKey("SeriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Engine");
+
                     b.Navigation("Make");
 
                     b.Navigation("Model");
+
+                    b.Navigation("Series");
                 });
 
             modelBuilder.Entity("CarAuction.Models.VehicleImage", b =>

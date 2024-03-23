@@ -166,7 +166,16 @@ namespace CarAuction.Controllers
                 Text = i.Name,
                 Value = i.Id.ToString(),
             });
-
+            vehicleVM.SeriesSelectList = _db.Series.Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString(),
+            });
+            vehicleVM.EngineSelectList = _db.Series.Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString(),
+            });
             return View(vehicleVM);
         }
 
@@ -178,7 +187,13 @@ namespace CarAuction.Controllers
                 return NotFound();
             }
 
-            Vehicle vehicle = _db.Vehicles.Include(u=>u.Make).Include(u=>u.Model).Include(u => u.Images).FirstOrDefault(u=>u.Id==id);
+            Vehicle vehicle = _db.Vehicles
+                                .Include(u => u.Make)
+                                .Include(u => u.Model)
+                                .Include(u => u.Series)
+                                .Include(u => u.Engine)
+                                .Include(u => u.Images)
+                                .FirstOrDefault(u=>u.Id==id);
             
             if (vehicle == null)
             {

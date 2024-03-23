@@ -1,29 +1,18 @@
-﻿@model CarAuction.Models.Vehicle
+﻿@using CarAuction.Models
+@model Vehicle
 
-<div class="col-lg-4 col-md-6 pb-4 filter @Model.Make.Name.Replace(' ', '_') @Model.Model.Name.Replace(' ', '_')" onclick="location.href='@Url.Action("Details", new { id = Model.Id })'">
-    <div class="card h-100 shadow-sm">
-        <img src="@Url.Content(@Model.Images.FirstOrDefault()?.ImagePath ?? "путь_к_изображению_заполнителю")" class="card-img-top">
+<div class="col-lg-4 col-md-6 mb-4 filter @(Model.Make.Name.Replace(" ", "_")) @(Model.Model.Name.Replace(" ", "_"))">
+    <div class="card h-100 shadow-sm" onclick="window.location.href='@Url.Action("Details", "ControllerName", new { id = Model.Id })';" style="cursor:pointer;">
+        <img src="@Url.Content(Model.Images.FirstOrDefault()?.ImagePath ?? "путь_к_изображению_заполнителю")" class="card-img-top" alt="Image of @Model.Make.Name @Model.Model.Name">
         <div class="card-body">
-            <h5 class="card-title">
-                @Model.Name.Substring(0, Math.Min(Model.Name.Length, 22))@(Model.Name.Length > 22 ? "..." : "")
-            </h5>
-            <hr />
-            <div>
-                Make:
-                <span class="float-right">@Model.Make.Name</span>
-            </div>
-            <div>
-                Model:
-                <span class="float-right">@Model.Model.Name</span>
-            </div>
-            <div>
-                Пробег:
-                <span class="float-right">@Model.Mileage км</span>
-            </div>
-            <br />
-            <div class="">
-                <strong><span class="float-right">@Model.Price BYN</span></strong>
-            </div>
+            <h5 class="card-title text-truncate">@Model.Year @Model.Make.Name @Model.Model.Name @Model.Series.Name</h5>
+            <hr>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item px-2 d-flex justify-content-between">
+                    <strong>Цена:</strong>
+                    <strong>@Model.Price BYN</strong>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
