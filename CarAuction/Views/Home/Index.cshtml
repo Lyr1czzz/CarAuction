@@ -13,10 +13,10 @@
                     <div id="priceCollapse" class="accordion-collapse collapse" aria-labelledby="priceHeading">
                         <div class="accordion-body">
                             <label for="priceRangeMin" class="form-label">Min Price: <span id="minPriceLabel">0</span></label>
-                            <input type="range" class="form-range" min="0" max="50000" id="priceRangeMin" value="0">
+                            <input type="range" class="form-range" min="0" max="1000000" id="priceRangeMin" value="0">
 
-                            <label for="priceRangeMax" class="form-label">Max Price: <span id="maxPriceLabel">50,000</span></label>
-                            <input type="range" class="form-range" min="0" max="50000" id="priceRangeMax" value="50000">
+                            <label for="priceRangeMax" class="form-label">Max Price: <span id="maxPriceLabel">1000000</span></label>
+                            <input type="range" class="form-range" min="0" max="1000000" id="priceRangeMax" value="1000000">
                         </div>
                     </div>
                 </div>
@@ -83,89 +83,39 @@
 
 @section Scripts {
     <script>
-        // Функция фильтрации списка на основе ввода пользователя
-        function filterList(searchInputSelector, listSelector) {
-            var searchValue = $(searchInputSelector).val().toLowerCase();
-            $(listSelector + " .list-group-item").each(function () {
-                var itemName = $(this).text().trim().toLowerCase();
-                if (itemName.indexOf(searchValue) !== -1) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-        }
-
-        $(document).ready(function () {
-            // Привязываем функцию filterList к событию 'input' для полей поиска
-            $("#makeSearchInput").on("input", function () {
-                filterList("#makeSearchInput", "#makeCollapse .list-group");
-            });
-
-            $("#modelSearchInput").on("input", function () {
-                filterList("#modelSearchInput", "#modelCollapse .list-group");
-            });
-
-            // ... Оставшийся код обработчиков событий ...
-        });
-
-        $(document).ready(function () {
-            function filterList() {
-                // Получаем выбранные значения фильтров
-                // Собираем выбранные марки
-                var checkedMakes = $('#makeCollapse .form-check-input:checked').map(function () {
-                    return $(this).val();
-                }).get();
-
-                // Собираем выбранные модели
-                var checkedModels = $('#modelCollapse .form-check-input:checked').map(function () {
-                    return $(this).val();
-                }).get();
-
-                // Применяем фильтрацию к карточкам
-                $(".filter").each(function () {
-                    var makeMatch = !checkedMakes.length || checkedMakes.some(make => $(this).hasClass(make));
-                    var modelMatch = !checkedModels.length || checkedModels.some(model => $(this).hasClass(model));
-
-                    // Решаем, показывать карточку или скрыть
-                    $(this).toggle(makeMatch && modelMatch);
-                });
-            }
-
-            // Привязываем функцию фильтрации к событию 'change' каждого флажка
-            $('#makeCollapse .form-check-input, #modelCollapse .form-check-input').on('change', filterList);
-        });
-
         $(document).ready(function () {
             var $min = $('#priceRangeMin');
             var $max = $('#priceRangeMax');
             var $minLabel = $('#minPriceLabel');
             var $maxLabel = $('#maxPriceLabel');
 
+            // Функция обновления текста меток для ползунков цен
             function updateLabels() {
                 $minLabel.text(parseInt($min.val()).toLocaleString());
                 $maxLabel.text(parseInt($max.val()).toLocaleString());
             }
 
+            // Функция определения видимости элементов на основе выбранных фильтров
             function filterList() {
-                // Получаем выбранные значения фильтров (марки и модели) ...
+                // Получаем выбранные значения фильтров
+                var checkedMakes = $('#makeCollapse .form-check-input:checked').map(function () {
+                    return $(this).val();
+                }).get();
 
-                // Получаем диапазон цен из ползунков
+                var checkedModels = $('#modelCollapse .form-check-input:checked').map(function () {
+                    return $(this).val();
+                }).get();
+
                 var minPrice = parseInt($min.val(), 10);
                 var maxPrice = parseInt($max.val(), 10);
-
-                // Обновляем значения меток минимальной и максимальной цены
                 updateLabels();
 
-                // Применяем фильтрацию к карточкам
                 $(".filter").each(function () {
-                    // Проверки выбранных марок и моделей...
-
-                    // Проверяем попадание цены карточки в выбранный диапазон
+                    var makeMatch = !checkedMakes.length || checkedMakes.some(make => $(this).hasClass(make));
+                    var modelMatch = !checkedModels.length || checkedModels.some(model => $(this).hasClass(model));
                     var price = parseInt($(this).data('price'), 10);
-                    var priceMatch = (price >= minPrice) && (price <= maxPrice);
+                    var priceMatch = (price >= minPrice && price <= maxPrice);
 
-                    // Решаем, показывать карточку или скрыть
                     $(this).toggle(makeMatch && modelMatch && priceMatch);
                 });
             }
@@ -174,17 +124,39 @@
             function checkSliders() {
                 if (parseInt($min.val()) > parseInt($max.val())) {
                     $min.val($max.val());
-                    $max.val($min.val());
+                    updateLabels();
                 }
+            }
+
+            // Функция фильтрации списка на основе ввода пользователя
+            function searchFilter(searchInputSelector, listSelector) {
+                var searchValue = $(searchInputSelector).val().toLowerCase();
+                $(listSelector + " .list-group-item").each(function () {
+                    var itemName = $(this).text().trim().toLowerCase();
+                    $(this).toggle(itemName.indexOf(searchValue) !== -1);
+                });
+                // Перезапускаем фильтрацию карточек после фильтрации списка
                 filterList();
             }
 
-            // Привязываем функцию фильтрации к событиям изменения ползунков и флажков
-            $('#makeCollapse .form-check-input, #modelCollapse .form-check-input').on('change', filterList);
-            $min.on('input change', checkSliders);
-            $max.on('input change', checkSliders);
+            // Привязываем события поиска, изменения ползунков и флажков к функции фильтрации
+            $("#makeSearchInput").on("input", function () {
+                searchFilter("#makeSearchInput", "#makeCollapse .list-group");
+            });
 
-            updateLabels();
+            $("#modelSearchInput").on("input", function () {
+                searchFilter("#modelSearchInput", "#modelCollapse .list-group");
+            });
+
+            $min.add($max).on('input change', function () {
+                checkSliders();
+                filterList();
+            });
+
+            $('#makeCollapse .form-check-input, #modelCollapse .form-check-input').on('change', filterList);
+
+            // Вызовем filterList при инициализации, чтобы применить начальные фильтры
+            filterList();
         });
     </script>
 }
