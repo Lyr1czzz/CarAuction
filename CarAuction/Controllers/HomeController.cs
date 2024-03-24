@@ -30,7 +30,9 @@ namespace CarAuction.Controllers
                 .Include(u => u.Engine)
                 .Include(u => u.Images),
                 Makes = _db.Makes,
-                Models = _db.Models
+                Models = _db.Models,
+                Series = _db.Series,
+                Engines = _db.Engines
             };
             return View(homeVM);
         }

@@ -64,6 +64,50 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="seriesHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#seriesCollapse" aria-expanded="false" aria-controls="seriesCollapse">
+                            Series
+                        </button>
+                    </h2>
+                    <div id="seriesCollapse" class="accordion-collapse collapse" aria-labelledby="seriesHeading">
+                        <div class="accordion-body">
+                            <input type="text" id="seriesSearchInput" class="form-control mb-2" placeholder="Search series">
+                            <div class="list-group overflow-auto" style="max-height: 200px;">
+                                @foreach (var item in Model.Series)
+                                {
+                                    <div class="list-group-item border-0">
+                                        <input class="form-check-input me-1" type="checkbox" id="@item.Name.Replace(' ', '_')" value="@item.Name.Replace(' ', '_')">
+                                        <label class="form-check-label" for="@item.Name.Replace(' ', '_')">@item.Name</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="engineHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#engineCollapse" aria-expanded="false" aria-controls="engineCollapse">
+                            Engine
+                        </button>
+                    </h2>
+                    <div id="engineCollapse" class="accordion-collapse collapse" aria-labelledby="engineHeading">
+                        <div class="accordion-body">
+                            <input type="text" id="engineSearchInput" class="form-control mb-2" placeholder="Search engine">
+                            <div class="list-group overflow-auto" style="max-height: 200px;">
+                                @foreach (var item in Model.Engines)
+                                {
+                                    <div class="list-group-item border-0">
+                                        <input class="form-check-input me-1" type="checkbox" id="@item.Name.Replace(' ', '_')" value="@item.Name.Replace(' ', '_')">
+                                        <label class="form-check-label" for="@item.Name.Replace(' ', '_')">@item.Name</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- зкшсу-->
                 
                 <!-- Add more accordion items here for additional filters if needed -->
@@ -106,6 +150,14 @@
                     return $(this).val();
                 }).get();
 
+                var checkedSeries = $('#seriesCollapse .form-check-input:checked').map(function () {
+                    return $(this).val();
+                }).get();
+
+                var checkedEngines = $('#engineCollapse .form-check-input:checked').map(function () {
+                    return $(this).val();
+                }).get();
+
                 var minPrice = parseInt($min.val(), 10);
                 var maxPrice = parseInt($max.val(), 10);
                 updateLabels();
@@ -113,10 +165,14 @@
                 $(".filter").each(function () {
                     var makeMatch = !checkedMakes.length || checkedMakes.some(make => $(this).hasClass(make));
                     var modelMatch = !checkedModels.length || checkedModels.some(model => $(this).hasClass(model));
+                    var seriesMatch = !checkedSeries.length || checkedSeries.some(series => $(this).hasClass(series));
+                    var engineMatch = !checkedEngines.length || checkedEngines.some(engine => $(this).hasClass(engine));
                     var price = parseInt($(this).data('price'), 10);
                     var priceMatch = (price >= minPrice && price <= maxPrice);
 
-                    $(this).toggle(makeMatch && modelMatch && priceMatch);
+                    // Решаем, показывать карточку или скрыть
+                    // Решаем, показывать карточку или скрыть
+                    $(this).toggle(makeMatch && modelMatch && priceMatch && seriesMatch && engineMatch);
                 });
             }
 
@@ -148,13 +204,21 @@
                 searchFilter("#modelSearchInput", "#modelCollapse .list-group");
             });
 
+            $("#seriesSearchInput").on("input", function () {
+                searchFilter("#seriesSearchInput", "#seriesCollapse .list-group");
+            });
+
+            $("#engineSearchInput").on("input", function () {
+                searchFilter("#engineSearchInput", "#engineCollapse .list-group");
+            });
+
             $min.add($max).on('input change', function () {
                 checkSliders();
                 filterList();
             });
 
             $('#makeCollapse .form-check-input, #modelCollapse .form-check-input').on('change', filterList);
-
+            $('#seriesCollapse .form-check-input, #engineCollapse .form-check-input').on('change', filterList);
             // Вызовем filterList при инициализации, чтобы применить начальные фильтры
             filterList();
         });

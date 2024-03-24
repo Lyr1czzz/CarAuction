@@ -1,6 +1,6 @@
 ﻿@model CarAuction.Models.Vehicle
 
-<div class="col-lg-4 col-md-6 filter @(Model.Make.Name.Replace(" ", "_")) @(Model.Model.Name.Replace(" ", "_"))" data-price="@Model.Price">
+<div class="col-lg-4 col-md-6 filter @(Model.Make.Name.Replace(" ", "_")) @(Model.Model.Name.Replace(" ", "_")) @(Model.Series.Name.Replace(" ", "_")) @(Model.Engine.Name.Replace(" ", "_"))" data-price="@Model.Price">
     <div class="card h-100 shadow-sm" onclick="window.location.href='@Url.Action("Details", "Home", new { id = Model.Id })'">
         <img src="@Url.Content(Model.Images.FirstOrDefault()?.ImagePath ?? "путь_к_изображению_заполнителю")" class="card-img-top" alt="@Model.Year @Model.Make.Name @Model.Model.Name">
         <div class="card-body">
