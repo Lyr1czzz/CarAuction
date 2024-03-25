@@ -1,4 +1,5 @@
 ﻿using CarAuction.Data;
+using CarAuction.Data.Enums;
 using CarAuction.Models;
 using CarAuction.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -58,10 +59,22 @@ namespace CarAuction.Controllers
                 {
                     Text = i.Name,
                     Value = i.Id.ToString(),
-                })
-            };
-
-            if(id == null)
+                }),
+                Vehicle_Type = new SelectList(Enum.GetValues(typeof(Vehicle_Type))),
+                Vehicle_AirBags = new SelectList(Enum.GetValues(typeof(Vehicle_AirBags))),
+                Vehicle_Body_Styles = new SelectList(Enum.GetValues(typeof(Vehicle_Body_Style))),
+                Vehicle_Drive_Line_Types = new SelectList(Enum.GetValues(typeof(Vehicle_Drive_Line_Type))),
+                Vehicle_Exteriors = new SelectList(Enum.GetValues(typeof(Vehicle_Exterior))),
+                Vehicle_Fuel_Types = new SelectList(Enum.GetValues(typeof(Vehicle_Fuel_Type))),
+                Vehicle_Interiors = new SelectList(Enum.GetValues(typeof(Vehicle_Interior))),
+                Vehicle_Keys = new SelectList(Enum.GetValues(typeof(Vehicle_Key))),
+                Vehicle_Loss = new SelectList(Enum.GetValues(typeof(Vehicle_Loss))),
+                Vehicle_Primary_Damages = new SelectList(Enum.GetValues(typeof(Vehicle_Primary_Damage))),
+                Vehicle_Secondary_Damages = new SelectList(Enum.GetValues(typeof(Vehicle_Secondary_Damage))),
+                Vehicle_Start_Codes = new SelectList(Enum.GetValues(typeof(Vehicle_Start_Code))),
+                Vehicle_Transmissions = new SelectList(Enum.GetValues(typeof(Vehicle_Transmission))),
+        };
+            if (id == null)
             {
                 //this is for create
                 return View(vehicleVM);
@@ -176,6 +189,19 @@ namespace CarAuction.Controllers
                 Text = i.Name,
                 Value = i.Id.ToString(),
             });
+            vehicleVM.Vehicle_Type = new SelectList(Enum.GetValues(typeof(Vehicle_Type)));
+            vehicleVM.Vehicle_AirBags = new SelectList(Enum.GetValues(typeof(Vehicle_AirBags)));
+            vehicleVM.Vehicle_Body_Styles = new SelectList(Enum.GetValues(typeof(Vehicle_Body_Style)));
+            vehicleVM.Vehicle_Drive_Line_Types = new SelectList(Enum.GetValues(typeof(Vehicle_Drive_Line_Type)));
+            vehicleVM.Vehicle_Exteriors = new SelectList(Enum.GetValues(typeof(Vehicle_Exterior)));
+            vehicleVM.Vehicle_Fuel_Types = new SelectList(Enum.GetValues(typeof(Vehicle_Fuel_Type)));
+            vehicleVM.Vehicle_Interiors = new SelectList(Enum.GetValues(typeof(Vehicle_Interior)));
+            vehicleVM.Vehicle_Keys = new SelectList(Enum.GetValues(typeof(Vehicle_Key)));
+            vehicleVM.Vehicle_Loss = new SelectList(Enum.GetValues(typeof(Vehicle_Loss)));
+            vehicleVM.Vehicle_Primary_Damages = new SelectList(Enum.GetValues(typeof(Vehicle_Primary_Damage)));
+            vehicleVM.Vehicle_Secondary_Damages = new SelectList(Enum.GetValues(typeof(Vehicle_Secondary_Damage)));
+            vehicleVM.Vehicle_Start_Codes = new SelectList(Enum.GetValues(typeof(Vehicle_Start_Code)));
+            vehicleVM.Vehicle_Transmissions = new SelectList(Enum.GetValues(typeof(Vehicle_Transmission)));
             return View(vehicleVM);
         }
 

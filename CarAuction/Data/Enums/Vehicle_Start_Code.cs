@@ -4,7 +4,9 @@ namespace CarAuction.Data.Enums
 {
     public enum Vehicle_Start_Code
     {
-        Run_and_Drive = 1,
+        Cant_Test = 1,
+        Run_and_Drive,
         Starts,
+        Stationary,
     }
 }

@@ -15,6 +15,7 @@ namespace CarAuction.Models
 
         public int Year { get; set; }
 
+        public Vehicle_Type Vehicle_Type { get; set; }
         public Vehicle_AirBags AirBags { get; set; }
         public Vehicle_Body_Style BodyStyle { get; set; }
         public Vehicle_Drive_Line_Type DriveLineType { get; set; }

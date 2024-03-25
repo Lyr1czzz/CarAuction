@@ -17,6 +17,125 @@
         <div class="row">
             <div class="col-8">
 
+                @* Vehicle Type Dropdown *@
+                <div class="form-group">
+                    <label asp-for="Vehicle.Vehicle_Type"></label>
+                    <select asp-for="Vehicle.Vehicle_Type" asp-items="@Model.Vehicle_Type" class="form-control">
+                        <option value="" selected>-- Select Vehicle Type --</option>
+                    </select>
+                    <span asp-validation-for="Vehicle.Vehicle_Type" class="text-danger"></span>
+                </div>
+
+                @* Vehicle AirBags Dropdown *@
+                <div class="form-group">
+                    <label asp-for="Vehicle.AirBags"></label>
+                    <select asp-for="Vehicle.AirBags" asp-items="@Model.Vehicle_AirBags" class="form-control">
+                        <option value="" selected>-- Select AirBags --</option>
+                    </select>
+                    <span asp-validation-for="Vehicle.AirBags" class="text-danger"></span>
+                </div>
+
+                @* Other dropdowns follow the same pattern... *@
+
+                @* Vehicle Body Style Dropdown *@
+                <div class="form-group">
+                    <label asp-for="Vehicle.BodyStyle"></label>
+                    <select asp-for="Vehicle.BodyStyle" asp-items="@Model.Vehicle_Body_Styles" class="form-control">
+                        <option value="" selected>-- Select Body Style --</option>
+                    </select>
+                    <span asp-validation-for="Vehicle.BodyStyle" class="text-danger"></span>
+                </div>
+
+                @* Vehicle Drive Line Type Dropdown *@
+                <div class="form-group">
+                    <label asp-for="Vehicle.DriveLineType"></label>
+                    <select asp-for="Vehicle.DriveLineType" asp-items="@Model.Vehicle_Drive_Line_Types" class="form-control">
+                        <option value="" selected>-- Select Drive Line Type --</option>
+                    </select>
+                    <span asp-validation-for="Vehicle.DriveLineType" class="text-danger"></span>
+                </div>
+
+                @* Vehicle Exterior Dropdown *@
+                <div class="form-group">
+                    <label asp-for="Vehicle.Exterior"></label>
+                    <select asp-for="Vehicle.Exterior" asp-items="@Model.Vehicle_Exteriors" class="form-control">
+                        <option value="" selected>-- Select Exterior --</option>
+                    </select>
+                    <span asp-validation-for="Vehicle.Exterior" class="text-danger"></span>
+                </div>
+
+                @* Vehicle Fuel Type Dropdown *@
+                <div class="form-group">
+                    <label asp-for="Vehicle.FuelType"></label>
+                    <select asp-for="Vehicle.FuelType" asp-items="@Model.Vehicle_Fuel_Types" class="form-control">
+                        <option value="" selected>-- Select Fuel Type --</option>
+                    </select>
+                    <span asp-validation-for="Vehicle.FuelType" class="text-danger"></span>
+                </div>
+
+                @* Vehicle Interior Dropdown *@
+                <div class="form-group">
+                    <label asp-for="Vehicle.Interior"></label>
+                    <select asp-for="Vehicle.Interior" asp-items="@Model.Vehicle_Interiors" class="form-control">
+                        <option value="" selected>-- Select Interior --</option>
+                    </select>
+                    <span asp-validation-for="Vehicle.Interior" class="text-danger"></span>
+                </div>
+
+                @* Vehicle Key Dropdown *@
+                <div class="form-group">
+                    <label asp-for="Vehicle.Key"></label>
+                    <select asp-for="Vehicle.Key" asp-items="@Model.Vehicle_Keys" class="form-control">
+                        <option value="" selected>-- Select Key --</option>
+                    </select>
+                    <span asp-validation-for="Vehicle.Key" class="text-danger"></span>
+                </div>
+
+                @* Vehicle Loss Dropdown *@
+                <div class="form-group">
+                    <label asp-for="Vehicle.Loss"></label>
+                    <select asp-for="Vehicle.Loss" asp-items="@Model.Vehicle_Loss" class="form-control">
+                        <option value="" selected>-- Select Loss --</option>
+                    </select>
+                    <span asp-validation-for="Vehicle.Loss" class="text-danger"></span>
+                </div>
+
+                @* Vehicle Primary Damage Dropdown *@
+                <div class="form-group">
+                    <label asp-for="Vehicle.PrimaryDamage"></label>
+                    <select asp-for="Vehicle.PrimaryDamage" asp-items="@Model.Vehicle_Primary_Damages" class="form-control">
+                        <option value="" selected>-- Select Primary Damage --</option>
+                    </select>
+                    <span asp-validation-for="Vehicle.PrimaryDamage" class="text-danger"></span>
+                </div>
+
+                @* Vehicle Secondary Damage Dropdown *@
+                <div class="form-group">
+                    <label asp-for="Vehicle.SecondaryDamage"></label>
+                    <select asp-for="Vehicle.SecondaryDamage" asp-items="@Model.Vehicle_Secondary_Damages" class="form-control">
+                        <option value="" selected>-- Select Secondary Damage --</option>
+                    </select>
+                    <span asp-validation-for="Vehicle.SecondaryDamage" class="text-danger"></span>
+                </div>
+
+                @* Vehicle Start Code Dropdown *@
+                <div class="form-group">
+                    <label asp-for="Vehicle.StartCode"></label>
+                    <select asp-for="Vehicle.StartCode" asp-items="@Model.Vehicle_Start_Codes" class="form-control">
+                        <option value="" selected>-- Select Start Code --</option>
+                    </select>
+                    <span asp-validation-for="Vehicle.StartCode" class="text-danger"></span>
+                </div>
+
+                @* Vehicle Transmission Dropdown *@
+                <div class="form-group">
+                    <label asp-for="Vehicle.Transmission"></label>
+                    <select asp-for="Vehicle.Transmission" asp-items="@Model.Vehicle_Transmissions" class="form-control">
+                        <option value="" selected>-- Select Transmission --</option>
+                    </select>
+                    <span asp-validation-for="Vehicle.Transmission" class="text-danger"></span>
+                </div>
+
                 <div class="form-group row mb-3">
                     <div class="col-4">
                         <label asp-for="Vehicle.VIN"></label>
