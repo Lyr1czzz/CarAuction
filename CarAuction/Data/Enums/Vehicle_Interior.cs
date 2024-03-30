@@ -4,8 +4,7 @@ namespace CarAuction.Data.Enums
 {
     public enum Vehicle_Interior
     {
-        N_A = 1,
-        Unknown,
+        Unknown = 1,
         Beige,
         Black,
         Blue,

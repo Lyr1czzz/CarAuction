@@ -4,7 +4,8 @@ namespace CarAuction.Data.Enums
 {
     public enum Vehicle_Fuel_Type
     {
-        Diesel = 1,
+        Unknown = 1,
+        Diesel,
         Electric,
         Flexible,
         Flexible_Fuel,

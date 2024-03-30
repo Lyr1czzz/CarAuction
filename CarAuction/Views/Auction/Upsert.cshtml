@@ -28,30 +28,49 @@
                             @* Ваш код для отображения изображений автомобилей *@
                             @if (vehicle.Images?.Any() == true)
                             {
-                                <div uk-slideshow="animation: push; autoplay: true; autoplay-interval: 5000">
+                                
+                                // Предположим, что VehicleId - это уникальное свойство вашей модели Vehicle
+                                var vehicleCarouselId = $"vehicleCarousel-{vehicle.Id}";
+                                
 
-                                    <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1">
-
-                                        <ul class="uk-slideshow-items">
-                                            @foreach (var image in vehicle.Images)
-                                            {
-                                                <li>
-                                                    <img src="@Url.Content("/"+image.ImagePath)" alt="" uk-cover>
-                                                </li>
-                                            }
-                                        </ul>
-
-                                        <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous uk-slideshow-item="previous"></a>
-                                        <a class="uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next uk-slideshow-item="next"></a>
-
-                                    </div>
-
-                                    <ul class="uk-slideshow-nav uk-dotnav uk-flex-center uk-margin"></ul>
-
+                            <div id="@vehicleCarouselId" class="carousel slide" data-bs-ride="carousel">
+                                <!-- Индикаторы -->
+                                <div class="carousel-indicators">
+                                    @{
+                                        int j = 0;
+                                    }
+                                        @foreach (var image in vehicle.Images)
+                                    {
+                                        <button type="button" data-bs-target="#@vehicleCarouselId" data-bs-slide-to="@j" class="@(j == 0 ? "active" : "")" aria-current="@(j == 0 ? "true" : "false")" aria-label="Slide @(j+1)"></button>
+                                        j++;
+                                    }
                                 </div>
+                                <!-- Слайды -->
+                                <div class="carousel-inner">
+                                    @{
+                                        int i = 0;
+                                    }
+                                        @foreach (var image in vehicle.Images)
+                                    {
+                                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                                            <img src="@Url.Content("~/" + image.ImagePath)" class="d-block w-100" alt="Image of Vehicle">
+                                        </div>
+                                        i++;
+                                    }
+                                </div>
+                                <!-- Управление -->
+                                <button class="carousel-control-prev" type="button" data-bs-target="#@vehicleCarouselId" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#@vehicleCarouselId" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
                             }
                             <div class="card-body">
-                                <h5 class="card-title">@vehicle.Make.Name</h5>
+                                <h5 class="card-title">@vehicle.Year @vehicle.Make.Name @vehicle.Model.Name @vehicle.Series.Name</h5>
                                 <button type="button" class="btn btn-primary btn-select" data-id="@vehicle.Id">Select</button>
                             </div>
                         </div>
@@ -69,27 +88,45 @@
                             @* Ваш код для отображения изображений автомобилей *@
                             @if (vehicle.Vehicle.Images?.Any() == true)
                             {
-                                <div uk-slideshow="animation: push; autoplay: true; autoplay-interval: 5000">
+                                    // Предположим, что VehicleId - это уникальное свойство вашей модели Vehicle
+                                    var lotCarouselId = $"lotCarousel-{vehicle.Id}";
 
-                                    <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1">
 
-                                        <ul class="uk-slideshow-items">
+                                    <div id="@lotCarouselId" class="carousel slide" data-bs-ride="carousel">
+                                        <!-- Индикаторы -->
+                                        <div class="carousel-indicators">
+                                            @{
+                                                int j = 0;
+                                            }
                                             @foreach (var image in vehicle.Vehicle.Images)
                                             {
-                                                <li>
-                                                    <img src="@Url.Content("/"+image.ImagePath)" alt="" uk-cover>
-                                                </li>
+                                                <button type="button" data-bs-target="#@lotCarouselId" data-bs-slide-to="@j" class="@(j == 0 ? "active" : "")" aria-current="@(j == 0 ? "true" : "false")" aria-label="Slide @(j+1)"></button>
+                                                j++;
                                             }
-                                        </ul>
-
-                                        <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous uk-slideshow-item="previous"></a>
-                                        <a class="uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next uk-slideshow-item="next"></a>
-
+                                        </div>
+                                        <!-- Слайды -->
+                                        <div class="carousel-inner">
+                                            @{
+                                                int i = 0;
+                                            }
+                                            @foreach (var image in vehicle.Vehicle.Images)
+                                            {
+                                                <div class="carousel-item @(i == 0 ? "active" : "")">
+                                                    <img src="@Url.Content("~/" + image.ImagePath)" class="d-block w-100" alt="Image of Vehicle">
+                                                </div>
+                                                i++;
+                                            }
+                                        </div>
+                                        <!-- Управление -->
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#@lotCarouselId" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#@lotCarouselId" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
                                     </div>
-
-                                    <ul class="uk-slideshow-nav uk-dotnav uk-flex-center uk-margin"></ul>
-
-                                </div>
                             }
                             <div class="card-body">
                                 <h5 class="card-title">@vehicle.Vehicle.Make.Name</h5>

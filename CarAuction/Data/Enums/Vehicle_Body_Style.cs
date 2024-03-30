@@ -4,7 +4,7 @@ namespace CarAuction.Data.Enums
 {
     public enum Vehicle_Body_Style
     {
-        None = 1,
+        Unknown = 1,
         _110,
         _2_Door,
         _2016_5_Sport_Utility,
@@ -298,7 +298,6 @@ namespace CarAuction.Data.Enums
         Transfer,
         Truck,
         Truck_Tractor,
-        Unknown,
         Utility,
         Van,
         Van_Camper_3_Door,

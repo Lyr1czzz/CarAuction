@@ -36,7 +36,7 @@ namespace CarAuction.Controllers
 
             List<int> vehicleInCart = shoppingCarts.Select(i=>i.VehicleId).ToList();
 
-            List<Vehicle> vehicles = _db.Vehicles.Where(u => vehicleInCart.Contains(u.Id)).Include(u => u.Images).ToList();
+            List<Vehicle> vehicles = _db.Vehicles.Where(u => vehicleInCart.Contains(u.Id)).Include(u => u.Images).Include(u => u.Make).Include(u => u.Model).Include(u => u.Series).Include(u => u.Engine).ToList();
             //_emailSender.SendEmailAsync("billyroll03@gmail.com", "qerw", "dsfgfsdgsgs");
             return View(vehicles);
         }

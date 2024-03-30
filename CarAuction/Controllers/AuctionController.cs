@@ -42,6 +42,8 @@ namespace CarAuction.Controllers
                 Vehicles = _db.Vehicles
                 .Include(u => u.Make)
                 .Include(u => u.Model)
+                .Include(u => u.Series)
+                .Include(u => u.Engine)
                 .Include(u => u.Images)
                 .ToList()
             };
@@ -79,6 +81,8 @@ namespace CarAuction.Controllers
             auctionVM.Vehicles = _db.Vehicles
                 .Include(u => u.Make)
                 .Include(u => u.Model)
+                .Include(u => u.Series)
+                .Include(u => u.Engine)
                 .Include(u => u.Images)
                 .ToList();
 

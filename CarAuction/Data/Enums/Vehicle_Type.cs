@@ -4,7 +4,8 @@ namespace CarAuction.Data.Enums
 {
     public enum Vehicle_Type
     {
-        Automobiles = 1,
+        Unknown = 1,
+        Automobiles,
         Boats,
         Buses,
         Classics,

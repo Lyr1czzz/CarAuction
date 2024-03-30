@@ -4,10 +4,10 @@ namespace CarAuction.Data.Enums
 {
     public enum Vehicle_Transmission
     {
-        Automatic = 1,
+        Unknown = 1,
+        Automatic,
         CVT,
         Manual,
-        Missing,
-        Unknown,
+        Missing
     }
 }

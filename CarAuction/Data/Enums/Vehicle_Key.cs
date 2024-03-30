@@ -4,7 +4,8 @@ namespace CarAuction.Data.Enums
 {
     public enum Vehicle_Key
     {
-        Present = 1,
+        Unknown = 1,
+        Present,
         No_Keys,
     }
 }

@@ -4,7 +4,8 @@ namespace CarAuction.Data.Enums
 {
     public enum Vehicle_Loss
     {
-        Collision = 1,
+        Unknown = 1,
+        Collision,
         Other,
     }
 }

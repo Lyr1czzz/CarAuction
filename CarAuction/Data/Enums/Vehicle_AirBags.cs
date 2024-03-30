@@ -4,7 +4,8 @@ namespace CarAuction.Data.Enums
 {
     public enum Vehicle_AirBags
     {
-        Intact_Airbags = 1,
-        Deployed_Airbagsб,
+        Unknown = 1,
+        Deployed_Airbags,
+        Intact_Airbags
     }
 }
