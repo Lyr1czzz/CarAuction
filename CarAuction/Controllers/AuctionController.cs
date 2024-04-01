@@ -26,11 +26,43 @@ namespace CarAuction.Controllers
             return View(auctionList);
         }
 
-        public IActionResult Index2()
+        public IActionResult AuctionList()
         {
             var auctionList = _db.Auctions.Where(u=>u.isActive == true).ToList();
 
             return View(auctionList);
+        }
+
+        //Get - Details
+        public IActionResult Details(int? id)
+        {
+            AuctionVM auctionVM = new AuctionVM()
+            {
+                Auction = new Auction(),
+                Vehicles = _db.Vehicles
+                .Include(u => u.Make)
+                .Include(u => u.Model)
+                .Include(u => u.Series)
+                .Include(u => u.Engine)
+                .Include(u => u.Images)
+                .ToList()
+            };
+
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                auctionVM.Auction = _db.Auctions.Find(id);
+                auctionVM.Auction.Lots = _db.Lots.Where(u => u.AuctionId == id).ToList();
+                if (auctionVM == null)
+                {
+                    return NotFound();
+                }
+                return View(auctionVM);
+            }
         }
 
         //Get - Upsert

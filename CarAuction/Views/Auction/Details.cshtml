@@ -1,0 +1,53 @@
+﻿@model CarAuction.Models.ViewModels.AuctionVM
+
+@{
+    ViewData["Title"] = "Аукцион автомобилей";
+}
+
+<h2>Аукцион автомобилей</h2>
+
+<!-- Карусель для текущего лота и следующих лотов -->
+<div id="lotCarousel" class="carousel slide" data-ride="carousel">
+    <!-- Индикаторы для карусели -->
+    <ol class="carousel-indicators">
+        @for (int i = 0; i < Model.Auction.Lots.Count; i++)
+        {
+            <li data-target="#lotCarousel" data-slide-to="@i" class="@(i == 0 ? "active" : "")"></li>
+        }
+    </ol>
+
+    <!-- Слайды для карусели -->
+    <div class="carousel-inner">
+        @for (int i = 0; i < Model.Auction.Lots.Count; i++)
+        {
+            <div class="carousel-item @(i == 0 ? "active" : "")">
+                <h3>@Model.Auction.Lots[i].Vehicle.Year @Model.Auction.Lots[i].Vehicle.Make.Name @Model.Auction.Lots[i].Vehicle.Model.Name @Model.Auction.Lots[i].Vehicle.Series.Name</h3>
+                <img src="@Url.Content(Model.Auction.Lots[i].Vehicle.Images.FirstOrDefault()?.ImagePath ?? "путь_к_изображению_заполнителю")" class="d-block w-100" />
+                <p>Начальная цена: $@Model.Auction.Lots[i].Vehicle.Price</p>
+                @if (Model.Auction.Lots[i].Bids != null && Model.Auction.Lots[i].Bids.Any())
+                {
+                    <p>Текущая ставка: $@Model.Auction.Lots[i].Bids.Last()</p>
+                }
+                <button type="button" class="btn btn-primary" onclick="placeBid(@Model.Auction.Lots[i].Id)">Повысить ставку на $50</button>
+            </div>
+        }
+    </div>
+
+    <!-- Контролы навигации для карусели -->
+    <a class="carousel-control-prev" href="#lotCarousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Предыдущий</span>
+    </a>
+    <a class="carousel-control-next" href="#lotCarousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Следующий</span>
+    </a>
+</div>
+
+@section Scripts {
+    <!-- Подключение скриптов Bootstrap (убедитесь, что они подключены в вашем проекте) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        // Ваш существующий скрипт placeBid будет работать без изменений.
+    </script>
+}
