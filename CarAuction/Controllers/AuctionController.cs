@@ -33,6 +33,24 @@ namespace CarAuction.Controllers
             return View(auctionList);
         }
 
+        public Lot GetCurrentLot()
+        {
+            return _db.Lots
+                .Include(l => l.Bids)
+                .Include(l => l.Vehicle)
+                    .ThenInclude(v => v.Make) // Связь один к одному или один ко многим
+                .Include(l => l.Vehicle)
+                    .ThenInclude(v => v.Model) // Связь один к одному или один ко многим
+                .Include(l => l.Vehicle)
+                    .ThenInclude(v => v.Series) // Связь один к одному или один ко многим
+                .Include(l => l.Vehicle)
+                    .ThenInclude(v => v.Engine) // Связь один к одному или один ко многим
+                .Include(l => l.Vehicle)
+                    .ThenInclude(v => v.Images) // Связь один ко многим
+                .Include(l => l.Auction)
+                .FirstOrDefault(l => l.Auction.isActive && !l.isSaled);
+        }
+
         //Get - Details
         public IActionResult Details(int? id)
         {
@@ -55,7 +73,9 @@ namespace CarAuction.Controllers
             }
             else
             {
+                var currentLot = GetCurrentLot();
                 auctionVM.Auction = _db.Auctions.Find(id);
+                auctionVM.CurrentLot = currentLot;
                 auctionVM.Auction.Lots = _db.Lots.Where(u => u.AuctionId == id).ToList();
                 if (auctionVM == null)
                 {
@@ -118,6 +138,8 @@ namespace CarAuction.Controllers
                 .Include(u => u.Images)
                 .ToList();
 
+            var currentLot = GetCurrentLot();
+            auctionVM.CurrentLot = currentLot;
             if (ModelState.IsValid)
             {
                 // Если ID аукциона == 0, значит это новый аукцион
