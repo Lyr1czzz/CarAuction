@@ -83,68 +83,58 @@
                 @if(Model.Auction.Lots != null)
                 @foreach (var vehicle in Model.Auction.Lots) 
                 {
-                        <div class="card" style="width: 18rem; min-width: 300px; margin-right: 15px;">
-                            @if (vehicle.Vehicle.Images?.Any() == true)
-                            {
-                                // Предположим, что VehicleId - это уникальное свойство вашей модели Vehicle
-                                var lotCarouselId = $"lotCarousel-{vehicle.Id}";
+                        <div class="col-md-4">
+                            <div class="card">
+                                @* Ваш код для отображения изображений автомобилей *@
+                                @if (vehicle.Vehicle.Images?.Any() == true)
+                                {
+
+                                    // Предположим, что VehicleId - это уникальное свойство вашей модели Vehicle
+                                    var vehicleCarouselId = $"vehicleCarousel-{vehicle.Id}";
 
 
-                                <div id="@lotCarouselId" class="carousel slide" data-bs-ride="carousel">
-                                    <!-- Индикаторы -->
-                                    <div class="carousel-indicators">
-                                        @{
-                                            int j = 0;
-                                        }
-                                        @foreach (var image in vehicle.Vehicle.Images)
-                                        {
-                                            <button type="button" data-bs-target="#@lotCarouselId" data-bs-slide-to="@j" class="@(j == 0 ? "active" : "")" aria-current="@(j == 0 ? "true" : "false")" aria-label="Slide @(j+1)"></button>
-                                            j++;
-                                        }
+                                    <div id="@vehicleCarouselId" class="carousel slide" data-bs-ride="carousel">
+                                        <!-- Индикаторы -->
+                                        <div class="carousel-indicators">
+                                            @{
+                                                int j = 0;
+                                            }
+                                            @foreach (var image in vehicle.Vehicle.Images)
+                                            {
+                                                <button type="button" data-bs-target="#@vehicleCarouselId" data-bs-slide-to="@j" class="@(j == 0 ? "active" : "")" aria-current="@(j == 0 ? "true" : "false")" aria-label="Slide @(j+1)"></button>
+                                                j++;
+                                            }
+                                        </div>
+                                        <!-- Слайды -->
+                                        <div class="carousel-inner">
+                                            @{
+                                                int i = 0;
+                                            }
+                                            @foreach (var image in vehicle.Vehicle.Images)
+                                            {
+                                                <div class="carousel-item @(i == 0 ? "active" : "")">
+                                                    <img src="@Url.Content("~/" + image.ImagePath)" class="d-block w-100" alt="Image of Vehicle">
+                                                </div>
+                                                i++;
+                                            }
+                                        </div>
+                                        <!-- Управление -->
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#@vehicleCarouselId" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#@vehicleCarouselId" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
                                     </div>
-                                    <!-- Слайды -->
-                                    <div class="carousel-inner">
-                                        @{
-                                            int i = 0;
-                                        }
-                                        @foreach (var image in vehicle.Vehicle.Images)
-                                        {
-                                            <div class="carousel-item @(i == 0 ? "active" : "")">
-                                                <img src="@Url.Content("~/" + image.ImagePath)" class="d-block w-100" alt="Image of Vehicle">
-                                            </div>
-                                            i++;
-                                        }
-                                    </div>
-                                    <!-- Управление -->
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#@lotCarouselId" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#@lotCarouselId" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
+                                }
+                                <div class="card-body">
+                                    <h5 class="card-title">@vehicle.Vehicle.Year @vehicle.Vehicle.Make.Name @vehicle.Vehicle.Model.Name @vehicle.Vehicle.Series.Name</h5>
+                                    <button type="button" class="btn btn-primary btn-danger" data-id="@vehicle.Id">Delete</button>
                                 </div>
-                            }
-                            <div class="card-body">
-                                <h5 class="card-title">@vehicle.Vehicle.Year @vehicle.Vehicle.Make.Name @vehicle.Vehicle.Model.Name @vehicle.Vehicle.Series.Name</h5>
-                                <p class="card-text">Начальная цена: $@vehicle.Vehicle.Price</p>
-                                <button type="button" class="btn btn-primary btn-danger" data-id="@vehicle.Id">Delete</button>
-
                             </div>
                         </div>
-
-
-
-                    <div class="col-md-4">
-                        <div class="card">
-                            @* Ваш код для отображения изображений автомобилей *@
-                            
-                            <div class="card-body">
-                                <h5 class="card-title">@vehicle.Vehicle.Make.Name</h5>
-                            </div>
-                        </div>
-                    </div>
                 }
             </div>
         </div>

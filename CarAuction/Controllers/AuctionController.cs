@@ -111,6 +111,11 @@ namespace CarAuction.Controllers
             {
                 auctionVM.Auction = _db.Auctions.Find(id);
                 auctionVM.Auction.Lots = _db.Lots.Where(u => u.AuctionId == id).ToList();
+
+
+                var currentLot = GetCurrentLot();
+                auctionVM.CurrentLot = currentLot;
+
                 if (auctionVM == null)
                 {
                     return NotFound();
@@ -119,7 +124,7 @@ namespace CarAuction.Controllers
             }
         }
 
-        //Post - Create
+        //Post - Upsert
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Upsert(AuctionVM model, string selectedVehicles, string selectedForDeleteVehicles, bool AuctionIsOn)
@@ -140,22 +145,31 @@ namespace CarAuction.Controllers
 
             var currentLot = GetCurrentLot();
             auctionVM.CurrentLot = currentLot;
+
             if (ModelState.IsValid)
             {
                 // Если ID аукциона == 0, значит это новый аукцион
+                // Если ID аукциона == 0, то это новый аукцион
                 if (auction.Id == 0)
                 {
-                    // Создаём новый лот аукциона
-                    _db.Add(auction);
+                    _db.Auctions.Add(auction);
                 }
                 else
                 {
-                    // Обновляем существующий аукцион
-                    _db.Update(auction);
+                    // Находим существующую сущность в базе данных
+                    var existingAuction = _db.Auctions.SingleOrDefault(a => a.Id == auction.Id);
 
-                    
+                    if (existingAuction != null)
+                    {
+                        // Обновляем свойства существующего аукциона вручную
+                        existingAuction.isActive = auction.isActive;
+                        existingAuction.AuctionDate = auction.AuctionDate;
+                        existingAuction.Lots = auction.Lots;
+                        // Перечислите все свойства, которые нужно обновить
+
+                        // заметьте, что здесь не используется _db.Update()
+                    }
                 }
-
                 // Сохраняем изменения, чтобы получить ID для новых аукционов
                 _db.SaveChanges();
 
