@@ -1,17 +1,18 @@
 ﻿@model CarAuction.Controllers.AuctionController.AuctionViewModel
 
-<h1>Аукцион</h1>
+<h1>Current Auction</h1>
 
-<div id="current-lot">
-    <h2>Текущий лот: @Model.CurrentLot.Vehicle.Make.Name @Model.CurrentLot.Vehicle.Model.Name</h2>
-    <img src="@Url.Content(Model.CurrentLot.Vehicle.Images.FirstOrDefault().ImagePath)" alt="Изображение автомобиля">
-    <p>Текущая ставка: @Model.CurrentBid</p>
-    <button id="place-bid" data-lot-id="@Model.CurrentLot.Id">Повысить ставку</button>
-    <p>Осталось времени: <span id="timer">@Model.RemainingTime</span> сек.</p>
+<div id="currentLot">
+    <h2>Lot: @Model.CurrentLot.Vehicle.Make.Name @Model.CurrentLot.Vehicle.Model.Name</h2>
+    <img src="@Model.CurrentLot.Vehicle.Images.FirstOrDefault().ImagePath" alt="Vehicle Image">
+    
+    <p>Текущая ставка: <span id="currentBid">@Model.CurrentBid</span></p>
+    <p>Оставшееся время: <span id="timer"> sec</span></p>
+    <button onclick="sendBid(@Model.CurrentLot.Id, 50)">Повысить ставку</button>
 </div>
 
-<div id="next-lots">
-    <h2>Следующие лоты:</h2>
+<div id="nextLots">
+    <h3>Upcoming Lots:</h3>
     <ul>
         @foreach (var lot in Model.NextLots)
         {
@@ -24,27 +25,53 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
     <script>
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/auctionHub")
+            .withUrl("/Details") // Укажи путь к хабу
             .build();
 
-        connection.on("UpdateBid", (lotId, amount, auctionDate) => {
-            if (lotId === @Model.CurrentLot.Id) {
-                $("#current-bid").text(amount);
-                // Обновить информацию о ставке
-            }
+        // Получаем элементы из HTML
+        const currentBidElement = document.getElementById("currentBid");
+        const timerElement = document.getElementById("timer");
+        const currentLotElement = document.getElementById("currentLot");
+        const nextLotsElement = document.getElementById("nextLots");
+
+        // Обработчик события BidSubmitted
+        connection.on("BidSubmitted", (lotId, bidAmount) => {
+            currentBidElement.textContent = bidAmount; // Обновляем текущую ставку
         });
 
-        connection.on("ResetTimer", () => {
-            $("#timer").text(10);
-            // Запустить таймер
+        // Обработчик события TimerStarted
+        connection.on("TimerStarted", (lotId) => {
+            // Запускаем таймер с обратным отсчетом от 10 секунд
+            let remainingTime = 10;
+            timerElement.textContent = remainingTime;
+            const timerInterval = setInterval(() => {
+                remainingTime--;
+                timerElement.textContent = remainingTime;
+                if (remainingTime === 0) {
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        });
+
+        // Обработчик события TimerUpdated
+        connection.on("TimerUpdated", (lotId, remainingTime) => {
+            timerElement.textContent = remainingTime; // Обновляем оставшееся время
+        });
+
+        // Обработчик события LotSold
+        connection.on("LotSold", (soldLot, nextLot) => {
+            // Обновляем информацию о текущем лоте
+            // ... (логика для отображения информации о nextLot)
         });
 
         connection.start().then(() => {
-            $("#place-bid").click(() => {
-                const lotId = $(this).data("lot-id");
-                const amount = @Model.CurrentBid + 50;
-                connection.invoke("PlaceBid", lotId, amount);
-            });
-        });
+            // После успешного подключения
+        }).catch(err => console.error(err.toString()));
+
+        // Функция для отправки ставки на сервер
+        function sendBid(lotId, bidAmount) {
+            connection.invoke("SendBid", lotId, bidAmount)
+                .catch(err => console.error(err.toString()));
+        }
     </script>
 }
