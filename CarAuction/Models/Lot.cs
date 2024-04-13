@@ -16,7 +16,7 @@ namespace CarAuction.Models
         public int AuctionId { get; set; }
         public Auction? Auction { get; set; }
 
-        public int FinalCost { get; set; }
+        public double FinalCost { get; set; }
 
         public bool isSaled { get; set; }
     }

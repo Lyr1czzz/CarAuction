@@ -1,51 +1,50 @@
-﻿@model CarAuction.Models.ViewModels.AuctionVM
+﻿@model CarAuction.Controllers.AuctionController.AuctionViewModel
 
-@{
-    ViewData["Title"] = "Аукцион автомобилей";
-    var currentLot = Model.CurrentLot;
-}
+<h1>Аукцион</h1>
 
-<h2>@ViewData["Title"]</h2>
-
-<!-- Место для отображения текущего лота -->
-<div class="card" style="width: 18rem; min-width: 300px; margin-right: 15px;">
-    <img class="card-img-top" src="@Url.Content("~/"+currentLot.Vehicle.Images.FirstOrDefault()?.ImagePath ?? "путь_к_изображению_заполнителю")" alt="@currentLot.Vehicle.Make.Name">
-    <div class="card-body">
-        <h5 class="card-title">@currentLot.Vehicle.Year @currentLot.Vehicle.Make.Name @currentLot.Vehicle.Model.Name @currentLot.Vehicle.Series.Name</h5>
-        <p class="card-text">Начальная цена: $@currentLot.Vehicle.Price</p>
-        <button type="button" class="btn btn-primary" onclick="placeBid(@currentLot.Id)">
-            Повысить ставку на $50
-        </button>
-    </div>
+<div id="current-lot">
+    <h2>Текущий лот: @Model.CurrentLot.Vehicle.Make.Name @Model.CurrentLot.Vehicle.Model.Name</h2>
+    <img src="@Url.Content(Model.CurrentLot.Vehicle.Images.FirstOrDefault().ImagePath)" alt="Изображение автомобиля">
+    <p>Текущая ставка: @Model.CurrentBid</p>
+    <button id="place-bid" data-lot-id="@Model.CurrentLot.Id">Повысить ставку</button>
+    <p>Осталось времени: <span id="timer">@Model.RemainingTime</span> сек.</p>
 </div>
 
-<div class="container-fluid">
-    <div class="d-flex flex-row flex-nowrap overflow-auto">
-        @foreach (var lot in Model.Auction.Lots)
+<div id="next-lots">
+    <h2>Следующие лоты:</h2>
+    <ul>
+        @foreach (var lot in Model.NextLots)
         {
-            // Пропустите текущий лот, поскольку он уже отображается отдельно
-            if (lot != currentLot)
-            {
-                <div class="card" style="width: 18rem; min-width: 300px; margin-right: 15px;">
-                    <img class="card-img-top" src="@Url.Content("~/"+lot.Vehicle.Images.FirstOrDefault()?.ImagePath ?? "путь_к_изображению_заполнителю")" alt="@lot.Vehicle.Make.Name">
-                    <div class="card-body">
-                        <h5 class="card-title">@lot.Vehicle.Year @lot.Vehicle.Make.Name @lot.Vehicle.Model.Name @lot.Vehicle.Series.Name</h5>
-                        <p class="card-text">Начальная цена: $@lot.Vehicle.Price</p>
-                        <button type="button" class="btn btn-primary" onclick="placeBid(@lot.Id)">
-                            Повысить ставку на $50
-                        </button>
-                    </div>
-                </div>
-            }
+            <li>@lot.Vehicle.Make.Name @lot.Vehicle.Model.Name</li>
         }
-    </div>
+    </ul>
 </div>
 
 @section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
     <script>
-        // Ваши существующие JavaScript функции
-        function placeBid(lotId) {
-            // Здесь код для размещения ставки
-        }
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/auctionHub")
+            .build();
+
+        connection.on("UpdateBid", (lotId, amount, auctionDate) => {
+            if (lotId === @Model.CurrentLot.Id) {
+                $("#current-bid").text(amount);
+                // Обновить информацию о ставке
+            }
+        });
+
+        connection.on("ResetTimer", () => {
+            $("#timer").text(10);
+            // Запустить таймер
+        });
+
+        connection.start().then(() => {
+            $("#place-bid").click(() => {
+                const lotId = $(this).data("lot-id");
+                const amount = @Model.CurrentBid + 50;
+                connection.invoke("PlaceBid", lotId, amount);
+            });
+        });
     </script>
 }

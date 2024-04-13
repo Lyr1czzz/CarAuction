@@ -1,13 +1,7 @@
-using CarAuction;
 using CarAuction.Data;
-using CarAuction.Models;
 using CarAuction.Utility;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace eTickets
 {
@@ -29,7 +23,7 @@ namespace eTickets
                 .AddEntityFrameworkStores<AppDbContext>();
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
-
+            builder.Services.AddSignalR();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSession(Options =>
             {
@@ -57,9 +51,9 @@ namespace eTickets
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();
+            app.MapHub<AuctionHub>("/auctionHub"); // Замените "AuctionHub" на название вашего класса хаба
 
             app.MapRazorPages();
-
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");

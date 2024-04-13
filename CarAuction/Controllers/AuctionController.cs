@@ -4,6 +4,7 @@ using CarAuction.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -13,9 +14,11 @@ namespace CarAuction.Controllers
     public class AuctionController : Controller
     {
         private readonly AppDbContext _db;
+        private readonly IHubContext<AuctionHub> _auctionHub;
 
-        public AuctionController(AppDbContext db)
+        public AuctionController(IHubContext<AuctionHub> auctionHub, AppDbContext db)
         {
+            _auctionHub = auctionHub;
             _db = db;
         }
 
@@ -31,6 +34,38 @@ namespace CarAuction.Controllers
             var auctionList = _db.Auctions.Where(u=>u.isActive == true).ToList();
 
             return View(auctionList);
+        }
+
+
+
+        //Get - Details
+        [Authorize]
+        public IActionResult Details()
+        {
+            var currentLot = GetCurrentLot();
+            var nextLots = _db.Lots.Include(l => l.Bids)
+                .Include(l => l.Vehicle)
+                    .ThenInclude(v => v.Make) // Связь один к одному или один ко многим
+                .Include(l => l.Vehicle)
+                    .ThenInclude(v => v.Model) // Связь один к одному или один ко многим
+                .Include(l => l.Vehicle)
+                    .ThenInclude(v => v.Series) // Связь один к одному или один ко многим
+                .Include(l => l.Vehicle)
+                    .ThenInclude(v => v.Engine) // Связь один к одному или один ко многим
+                .Include(l => l.Vehicle)
+                    .ThenInclude(v => v.Images) // Связь один ко многим
+                .Include(l => l.Auction).
+                Where(l => l.AuctionId == currentLot.AuctionId && l.Id != currentLot.Id).ToList();
+
+            var viewModel = new AuctionViewModel
+            {
+                CurrentLot = currentLot,
+                NextLots = nextLots,
+                CurrentBid = currentLot.Bids.Any() ? currentLot.Bids.Max(b => b.Amount) : currentLot.Vehicle.Price,
+                RemainingTime = 10 // начальное значение таймера
+            };
+
+            return View(viewModel);
         }
 
         public Lot GetCurrentLot()
@@ -49,40 +84,6 @@ namespace CarAuction.Controllers
                     .ThenInclude(v => v.Images) // Связь один ко многим
                 .Include(l => l.Auction)
                 .FirstOrDefault(l => l.Auction.isActive && !l.isSaled);
-        }
-
-        //Get - Details
-        public IActionResult Details(int? id)
-        {
-            AuctionVM auctionVM = new AuctionVM()
-            {
-                Auction = new Auction(),
-                Vehicles = _db.Vehicles
-                .Include(u => u.Make)
-                .Include(u => u.Model)
-                .Include(u => u.Series)
-                .Include(u => u.Engine)
-                .Include(u => u.Images)
-                .ToList()
-            };
-
-
-            if (id == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                var currentLot = GetCurrentLot();
-                auctionVM.Auction = _db.Auctions.Find(id);
-                auctionVM.CurrentLot = currentLot;
-                auctionVM.Auction.Lots = _db.Lots.Where(u => u.AuctionId == id).ToList();
-                if (auctionVM == null)
-                {
-                    return NotFound();
-                }
-                return View(auctionVM);
-            }
         }
 
         //Get - Upsert
@@ -113,9 +114,6 @@ namespace CarAuction.Controllers
                 auctionVM.Auction.Lots = _db.Lots.Where(u => u.AuctionId == id).ToList();
 
 
-                var currentLot = GetCurrentLot();
-                auctionVM.CurrentLot = currentLot;
-
                 if (auctionVM == null)
                 {
                     return NotFound();
@@ -143,8 +141,6 @@ namespace CarAuction.Controllers
                 .Include(u => u.Images)
                 .ToList();
 
-            var currentLot = GetCurrentLot();
-            auctionVM.CurrentLot = currentLot;
 
             if (ModelState.IsValid)
             {
@@ -248,6 +244,15 @@ namespace CarAuction.Controllers
             _db.Auctions.Remove(obj);
             _db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+
+        public class AuctionViewModel
+        {
+            public Lot CurrentLot { get; set; }
+            public List<Lot> NextLots { get; set; }
+            public double CurrentBid { get; set; }
+            public int RemainingTime { get; set; }
         }
     }
 }
