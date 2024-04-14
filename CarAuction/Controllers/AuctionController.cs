@@ -1,5 +1,4 @@
 ﻿using CarAuction.Data;
-using CarAuction.Hubs;
 using CarAuction.Models;
 using CarAuction.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -17,11 +16,9 @@ namespace CarAuction.Controllers
     public class AuctionController : Controller
     {
         private readonly AppDbContext _db;
-        private readonly IHubContext<AuctionHub> _auctionHub;
 
-        public AuctionController(IHubContext<AuctionHub> auctionHub, AppDbContext db)
+        public AuctionController(AppDbContext db)
         {
-            _auctionHub = auctionHub;
             _db = db;
         }
 
@@ -246,84 +243,6 @@ namespace CarAuction.Controllers
             _db.Auctions.Remove(obj);
             _db.SaveChanges();
             return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SendBid(int lotId, double bidAmount)
-        {
-            // 1. Находим лот и проверяем, активен ли он и не продан ли
-            var lot = await _db.Lots
-                .Include(l => l.Bids)
-                .Include(l => l.Vehicle)
-                .FirstOrDefaultAsync(l => l.Id == lotId && l.Auction.isActive && !l.isSaled);
-
-            if (lot == null)
-            {
-                // Обработка ошибки, если лот не найден или неактивен 
-                return BadRequest();
-            }
-
-            // 2. Создаем новую ставку и связываем ее с пользователем и лотом
-            var newBid = new Bid
-            {
-                Amount = bidAmount,
-                AuctionDate = DateTime.Now.ToString(),
-                Lot = lot,
-            };
-            _db.Bids.Add(newBid);
-
-            // 3. Обновляем информацию о лоте (например, FinalCost)
-            lot.FinalCost = bidAmount;
-
-            // 4. Сохраняем изменения в базе данных
-            await _db.SaveChangesAsync();
-
-            // 5. Получаем обновленный лот
-            var updatedLot = await _db.Lots
-                .Include(l => l.Bids)
-                .Include(l => l.Vehicle)
-                .FirstOrDefaultAsync(l => l.Id == lotId);
-
-            // 6. Уведомляем всех клиентов о новой ставке через хаб
-            await _auctionHub.Clients.All.SendAsync("ReceiveBid", updatedLot);
-
-            return Ok(); // Или другой подходящий результат
-        }
-
-        private async Task ManageTimer(int lotId)
-        {
-            for (int i = 10; i >= 0; i--)
-            {
-                await _auctionHub.Clients.All.SendAsync("UpdateTimer", lotId, i);
-                await Task.Delay(1000);
-            }
-
-            await CloseLot(lotId);
-        }
-
-        private async Task CloseLot(int lotId)
-        {
-            var currentLot = _db.Lots.Find(lotId);
-            if (currentLot == null) return;
-
-            currentLot.isSaled = true;
-            if (currentLot.Bids.Any())
-            {
-                currentLot.FinalCost = currentLot.Bids.Max(b => b.Amount);
-            }
-            await _db.SaveChangesAsync();
-
-            var nextLot = GetNextLot(currentLot.AuctionId);
-            await _auctionHub.Clients.All.SendAsync("LotSold", currentLot, nextLot);
-        }
-
-        private Lot GetNextLot(int auctionId)
-        {
-            return _db.Lots
-                .Include(l => l.Bids)
-                .Include(l => l.Vehicle)
-                // ... Include other related data ...
-                .FirstOrDefault(l => l.AuctionId == auctionId && !l.isSaled);
         }
 
         public class AuctionViewModel

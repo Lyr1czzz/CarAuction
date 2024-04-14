@@ -1,5 +1,4 @@
 using CarAuction.Data;
-using CarAuction.Hubs;
 using CarAuction.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -52,7 +51,7 @@ namespace eTickets
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();
-            app.MapHub<AuctionHub>("/Details"); // Замените "AuctionHub" на название вашего класса хаба
+            app.MapHub<AuctionHub>("/chat");
 
             app.MapRazorPages();
             app.MapControllerRoute(
