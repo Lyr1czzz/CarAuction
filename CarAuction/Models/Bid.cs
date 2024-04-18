@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace CarAuction.Models
 {
@@ -12,7 +13,9 @@ namespace CarAuction.Models
 
         public string? AuctionDate { get; set; } = string.Empty!;
 
+        [JsonIgnore]
         public virtual Lot? Lot { get; set; }
+        [JsonIgnore]
         public ApplicationUser? User { get; set; }
     }
 }

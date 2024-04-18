@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace CarAuction.Models
 {
@@ -8,7 +9,7 @@ namespace CarAuction.Models
         public int Id { get; set; }
 
         public string AuctionDate { get; set; }
-
+        [JsonIgnore]
         public List<Lot>? Lots { get; set; }
 
         public bool isActive { get; set; }

@@ -1,6 +1,7 @@
 ﻿using CarAuction.Data.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace CarAuction.Models
 {
@@ -36,24 +37,28 @@ namespace CarAuction.Models
         public int EngineId { get; set; }
 
         [ForeignKey("EngineId")]
+        [JsonIgnore]
         public virtual Engine? Engine { get; set; }
 
         [Display(Name = "Series Type")]
         public int SeriesId { get; set; }
 
         [ForeignKey("SeriesId")]
+        [JsonIgnore]
         public virtual Series? Series { get; set; }
 
         [Display(Name= "Make Type")]
         public int MakeId { get; set; }
 
         [ForeignKey("MakeId")]
+        [JsonIgnore]
         public virtual Make? Make { get; set; }
 
         [Display(Name = "Model Type")]
         public int ModelId { get; set; }
 
         [ForeignKey("ModelId")]
+        [JsonIgnore]
         public virtual Model? Model { get; set; }
 
         public virtual ICollection<VehicleImage>? Images { get; set; }

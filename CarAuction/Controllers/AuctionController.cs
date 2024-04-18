@@ -36,6 +36,8 @@ namespace CarAuction.Controllers
             return View(auctionList);
         }
 
+
+
         //Get - Details
         public IActionResult Details()
         {

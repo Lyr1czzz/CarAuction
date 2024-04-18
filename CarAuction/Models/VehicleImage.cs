@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Drawing;
+using System.Text.Json.Serialization;
 
 namespace CarAuction.Models
 {
@@ -13,6 +14,8 @@ namespace CarAuction.Models
         public string? ImagePath { get; set; }
         
         [ForeignKey("VehicleId")]
+        [JsonIgnore]
+
         public virtual Vehicle Vehicle { get; set; }
     }
 }

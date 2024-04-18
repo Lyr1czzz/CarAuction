@@ -98,8 +98,7 @@ public class AuctionHub : Hub
         var newVM = new AuctionViewModel
         {
             CurrentLot = GetCurrentLot(int.Parse(AuctionId)),
-            NextLots = nextLots,
-            RemainingTime = 10
+            NextLots = nextLots
         };
 
         await Clients.All.SendAsync("ChangeLot", newVM);

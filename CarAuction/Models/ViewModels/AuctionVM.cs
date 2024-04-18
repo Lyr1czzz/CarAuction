@@ -6,7 +6,9 @@ namespace CarAuction.Models.ViewModels
     {
         public Auction Auction { get; set; }
 
-        public Lot? CurrentLot { get; set; }
+        public int? CurrentLotId { get; set; }
+
+        public List<Lot>? Lots { get; set; }
 
         public List<Vehicle>? Vehicles { get; set; }
     }
