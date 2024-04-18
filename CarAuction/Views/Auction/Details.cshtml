@@ -102,6 +102,7 @@
 
                         <button id="sendBtn" class="btn btn-primary">Поднять ставку на 200BYN</button>
                         <input type="hidden" id="current-lot-id" value="@Model.CurrentLot.Id" />
+                        <input type="hidden" id="auction-id" value="@Model.CurrentLot.AuctionId" />
                     </div>
                 </div>
             </div>
@@ -128,6 +129,7 @@
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl("/chat")
             .build();
+        const auctionId = document.getElementById("auction-id").value;
 
         document.getElementById("sendBtn").addEventListener("click", function () {
             let lotId = document.getElementById("current-lot-id").value;
@@ -138,6 +140,10 @@
             hubConnection.invoke("StartOrResetTimer").catch((err) => {
                 console.error(err.toString());
             });
+        });
+
+        hubConnection.on("ChangeLot", function (newVM) {
+            console.log("dsffds")
         });
 
         hubConnection.on("Receive", function (message) {
@@ -161,7 +167,10 @@
             var timerProgressBar = document.getElementById("timerProgressBar");
             timerProgressBar.style.width = '0%'; // Сброс ширины прогресс-бара при окончании времени
             timerProgressBar.classList.remove('progress-bar-animated', 'progress-bar-striped'); // Убираем анимацию
-            alert("gg");
+
+            hubConnection.invoke("NextLot", auctionId).catch((err) => {
+                console.error(err.toString());
+            });
         });
 
         hubConnection.start()

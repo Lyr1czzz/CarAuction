@@ -1,7 +1,10 @@
 ﻿using CarAuction.Data;
+using CarAuction.Models;
+using CarAuction.Models.ViewModels;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Timers;
+using static CarAuction.Controllers.AuctionController;
 
 public class AuctionHub : Hub
 {
@@ -39,14 +42,35 @@ public class AuctionHub : Hub
         return Clients.All.SendAsync("TimerUpdated", _remainingTime);
     }
 
+    public Lot GetCurrentLot(int AuctionId)
+    {
+        return _db.Lots
+            .Include(l => l.Bids)
+            .Include(l => l.Vehicle)
+                .ThenInclude(v => v.Make) 
+            .Include(l => l.Vehicle)
+                .ThenInclude(v => v.Model)
+            .Include(l => l.Vehicle)
+                .ThenInclude(v => v.Series)
+            .Include(l => l.Vehicle)
+                .ThenInclude(v => v.Engine)
+            .Include(l => l.Vehicle)
+                .ThenInclude(v => v.Images)
+        .Include(l => l.Auction)
+            .FirstOrDefault(l => l.Auction.isActive && !l.isSaled && l.AuctionId == AuctionId);
+    }
+
     private async void OnTimerElapsed(object sender, ElapsedEventArgs e)
     {
-        _remainingTime--;
+         _remainingTime--;
 
         if (_remainingTime <= 0)
         {
             _timer.Stop();
+           
+
             await _hubContext.Clients.All.SendAsync("TimerEnded");
+            
         }
         else
         {
@@ -54,11 +78,38 @@ public class AuctionHub : Hub
         }
     }
 
+    public async Task NextLot(string AuctionId)
+    {
+        var nextLots = _db.Lots
+            .Include(l => l.Bids)
+            .Include(l => l.Vehicle)
+                .ThenInclude(v => v.Make)
+            .Include(l => l.Vehicle)
+                .ThenInclude(v => v.Model)
+            .Include(l => l.Vehicle)
+                .ThenInclude(v => v.Series)
+            .Include(l => l.Vehicle)
+                .ThenInclude(v => v.Engine)
+            .Include(l => l.Vehicle)
+                .ThenInclude(v => v.Images)
+            .Include(l => l.Auction).
+            Where(l => l.AuctionId == int.Parse(AuctionId) && l.isSaled == false).ToList();
+
+        var newVM = new AuctionViewModel
+        {
+            CurrentLot = GetCurrentLot(int.Parse(AuctionId)),
+            NextLots = nextLots,
+            RemainingTime = 10
+        };
+
+        await Clients.All.SendAsync("ChangeLot", newVM);
+    }
+
     public async Task Send(string lotId)
     {
         var lot = _db.Lots.Where(l => l.Id == int.Parse(lotId)).FirstOrDefault();
         lot.FinalCost += 50;
-        _db.Lots.Update(lot);
+        lot.isSaled = false;
         await _db.SaveChangesAsync();
         await Clients.All.SendAsync("Receive", lot.FinalCost);
     }
