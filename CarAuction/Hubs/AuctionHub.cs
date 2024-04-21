@@ -3,14 +3,18 @@ using CarAuction.Models;
 using CarAuction.Models.ViewModels;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Timers;
+using Microsoft.AspNetCore.Authorization;
 using static CarAuction.Controllers.AuctionController;
 
+[Authorize]
 public class AuctionHub : Hub
 {
     private static System.Timers.Timer _timer;
     private const int TimerInterval = 10000; // Интервал 10 секунд
     private static int _remainingTime = TimerInterval / 1000;
+    private static int _lotId;
     private static IHubContext<AuctionHub> _hubContext;
     private readonly AppDbContext _db;
 
@@ -67,7 +71,7 @@ public class AuctionHub : Hub
         if (_remainingTime <= 0)
         {
             _timer.Stop();
-           
+
 
             await _hubContext.Clients.All.SendAsync("TimerEnded");
             
@@ -80,6 +84,11 @@ public class AuctionHub : Hub
 
     public async Task NextLot(string AuctionId)
     {
+
+        var lot = _db.Lots.Where(l => l.Id == _lotId).FirstOrDefault();
+        lot.isSaled = true;
+        await _db.SaveChangesAsync();
+
         var nextLots = _db.Lots
             .Include(l => l.Bids)
             .Include(l => l.Vehicle)
@@ -107,9 +116,13 @@ public class AuctionHub : Hub
     public async Task Send(string lotId)
     {
         var lot = _db.Lots.Where(l => l.Id == int.Parse(lotId)).FirstOrDefault();
-        lot.FinalCost += 50;
-        lot.isSaled = false;
+        _lotId = int.Parse(lotId);
+        var userId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var FinalOwner = _db.ApplicationUsers.FirstOrDefault(u => u.Id == userId);
+        lot.FinalCost += 200;
+
+        _db.Bids.Add(new Bid { Amount = lot.FinalCost, User = FinalOwner, AuctionDate = DateTime.Now.ToString(), Lot = lot });
         await _db.SaveChangesAsync();
-        await Clients.All.SendAsync("Receive", lot.FinalCost);
+        await Clients.All.SendAsync("Receive", lot.FinalCost, FinalOwner.FullName);
     }
 }

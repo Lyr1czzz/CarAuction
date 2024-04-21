@@ -15,95 +15,127 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-4">
-                        @* Placeholder for image *@
-                        @if (Model.CurrentLot.Vehicle.Images?.Any() == true)
-                        {
-                            <div id="vehicleCarousel" class="carousel slide" data-bs-ride="carousel">
-                                <!-- Индикаторы -->
-                                <div class="carousel-indicators">
-                                    @{
-                                        int j = 0;
-                                    }
-                                    @foreach (var image in Model.CurrentLot.Vehicle.Images)
-                                    {
-                                        <button type="button" data-bs-target="#vehicleCarousel" data-bs-slide-to="@j" class="@(j == 0 ? "active" : "")" aria-current="@(j == 0 ? "true" : "false")" aria-label="Slide @(j+1)"></button>
-                                        j++;
-                                    }
+                    <div class="modal fade" id="winnerModal" tabindex="-1" aria-labelledby="winnerModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="winnerModalLabel">Auction Winner</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-
-                                <!-- Слайды -->
-                                <div class="carousel-inner">
-                                    @{
-                                        int i = 0;
-                                    }
-                                    @foreach (var image in Model.CurrentLot.Vehicle.Images)
-                                    {
-                                        <div class="carousel-item @(i == 0 ? "active" : "")">
-                                            <img src="@Url.Content("~/" + image.ImagePath)" class="d-block w-100" alt="Image of Vehicle">
-                                        </div>
-                                        i++;
-                                    }
+                                <div class="modal-body">
+                                    <!-- Сюда будет добавлен текст с именем победителя -->
                                 </div>
-
-                                <!-- Управление -->
-                                <button class="carousel-control-prev" type="button" data-bs-target="#vehicleCarousel" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Previous</span>
-                                </button>
-                                <button class="carousel-control-next" type="button" data-bs-target="#vehicleCarousel" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Next</span>
-                                </button>
-                            </div>
-                        }
-                        else
-                        {
-                            <img src="@Url.Content("~/images/default-image.png")" class="img-fluid" alt="Default Vehicle Image" />
-                        }
-                    </div>
-                    <div class="col-md-8">
-                        <h5 class="card-title">Последняя цена: <span id="current-price" class="text-success">@Model.CurrentLot.FinalCost</span> BYN</h5>
-
-                        @* Description block *@
-                        <div class="d-flex justify-content-between">
-                            <strong>Производитель:</strong>
-                            <span class="float-right">@Model.CurrentLot.Vehicle.Make.Name</span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <strong>Модель:</strong>
-                            <span class="float-right">@Model.CurrentLot.Vehicle.Model.Name</span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <strong>Серия:</strong>
-                            <span class="float-right">@Model.CurrentLot.Vehicle.Series.Name</span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <strong>Двигатель:</strong>
-                            <span class="float-right">@Model.CurrentLot.Vehicle.Engine.Name</span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <strong>Пробег:</strong>
-                            <span>@Model.CurrentLot.Vehicle.Odometer км</span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <strong>Тип:</strong>
-                            <span>@Model.CurrentLot.Vehicle.Vehicle_Type.ToString()</span>
-                        </div>
-
-                        <div id="timerDisplay" class="mt-3">
-                            <div class="progress" style="height: 40px;">
-                                <div id="timerProgressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                                     style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                    Осталось <span id="time">10</span> секунд
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
-
-                        <button id="sendBtn" class="btn btn-primary">Поднять ставку на 200BYN</button>
-                        <input type="hidden" id="current-lot-id" value="@Model.CurrentLot.Id" />
-                        <input type="hidden" id="auction-id" value="@Model.CurrentLot.AuctionId" />
                     </div>
+                    @if (Model.CurrentLot != null)
+                    {
+                        <div class="col-md-4">
+                            @* Placeholder for image *@
+                            @if (Model.CurrentLot.Vehicle.Images?.Any() == true)
+                            {
+                                <div id="vehicleCarousel" class="carousel slide" data-bs-ride="carousel">
+                                    <!-- Индикаторы -->
+                                    <div class="carousel-indicators">
+                                        @{
+                                            int j = 0;
+                                        }
+                                        @foreach (var image in Model.CurrentLot.Vehicle.Images)
+                                        {
+                                            <button type="button" data-bs-target="#vehicleCarousel" data-bs-slide-to="@j" class="@(j == 0 ? "active" : "")" aria-current="@(j == 0 ? "true" : "false")" aria-label="Slide @(j+1)"></button>
+                                            j++;
+                                        }
+                                    </div>
+
+                                    <!-- Слайды -->
+                                    <div class="carousel-inner">
+                                        @{
+                                            int i = 0;
+                                        }
+                                        @foreach (var image in Model.CurrentLot.Vehicle.Images)
+                                        {
+                                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                                <img src="@Url.Content("~/" + image.ImagePath)" class="d-block w-100" alt="Image of Vehicle">
+                                            </div>
+                                            i++;
+                                        }
+                                    </div>
+
+                                    <!-- Управление -->
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#vehicleCarousel" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#vehicleCarousel" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@Url.Content("~/images/default-image.png")" class="img-fluid" alt="Default Vehicle Image" />
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            <h5 class="card-title">Последняя цена: <span id="current-price" class="text-success">@Model.CurrentLot.FinalCost</span> BYN</h5>
+                            <h5 class="card-title">От кого: 
+                                <span id="current-owner" class="text-success">
+                                    @if (Model.CurrentLot.Bids.Count > 0)
+                                    { 
+                                        @Model.CurrentLot.Bids.Last().User.FullName 
+                                    }
+                                </span>
+                            </h5>
+                            @* Description block *@
+                            <div class="d-flex justify-content-between">
+                                <strong>Производитель:</strong>
+                                <span class="float-right">@Model.CurrentLot.Vehicle.Make.Name</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <strong>Модель:</strong>
+                                <span class="float-right">@Model.CurrentLot.Vehicle.Model.Name</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <strong>Серия:</strong>
+                                <span class="float-right">@Model.CurrentLot.Vehicle.Series.Name</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <strong>Двигатель:</strong>
+                                <span class="float-right">@Model.CurrentLot.Vehicle.Engine.Name</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <strong>Пробег:</strong>
+                                <span>@Model.CurrentLot.Vehicle.Odometer км</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <strong>Тип:</strong>
+                                <span>@Model.CurrentLot.Vehicle.Vehicle_Type.ToString()</span>
+                            </div>
+
+                            <div id="timerDisplay" class="mt-3">
+                                <div class="progress" style="height: 40px;">
+                                    <div id="timerProgressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                    style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                                        Осталось <span id="time">10</span> секунд
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button id="sendBtn" class="btn btn-primary">Поднять ставку на 200BYN</button>
+                            <input type="hidden" id="current-lot-id" value="@Model.CurrentLot.Id" />
+                            <input type="hidden" id="auction-id" value="@Model.CurrentLot.AuctionId" />
+                            <input type="hidden" id="auction-lastOwner" value="@if(Model.CurrentLot.Bids.Count > 0) {@Model.CurrentLot.Bids.Last().User.FullName}" />
+
+                        </div>
+                    }
+                    else
+                    {
+                        <h1>Нет лотов</h1>
+                    }
                 </div>
             </div>
         </div>
@@ -115,9 +147,16 @@
 
     <h4 class="mt-3">Список лотов:</h4>
     <ul class="list-group">
-        @foreach (var lot in Model.NextLots)
+        @if (Model.NextLots!=null)
         {
-            <li class="list-group-item">@lot.Vehicle.Make.Name @lot.Vehicle.Model.Name @lot.Vehicle.Series.Name</li>
+            @foreach (var lot in Model.NextLots)
+            {
+                <li class="list-group-item">@lot.Vehicle.Make.Name @lot.Vehicle.Model.Name @lot.Vehicle.Series.Name</li>
+            }
+        }
+        else
+        {
+            <h1>Нема больше</h1>
         }
     </ul>
 </div>
@@ -126,6 +165,19 @@
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
     <script>
+        function openWinnerModal(winnerName) {
+            // Получение элемента модального окна
+            const modalElement = document.getElementById('winnerModal');
+
+            // Обновление содержимого модального окна
+            const modalBody = modalElement.querySelector('.modal-body');
+            modalBody.textContent = `Congratulations to ${winnerName} for winning the lot!`;
+
+            // Создание экземпляра Bootstrap Modal и его отображение
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
+
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl("/chat")
             .build();
@@ -143,15 +195,19 @@
         });
 
         hubConnection.on("ChangeLot", function (newVM) {
-
-            console.log(newVM)
+            location.reload();
+            openWinnerModal(document.getElementById("auction-lastOwner").textContent);
         });
 
-        hubConnection.on("Receive", function (message) {
+        hubConnection.on("Receive", function (message, FinalOwner) {
 
             let messageElement = document.createElement("p");
             messageElement.textContent = message;
             document.getElementById("current-price").textContent = message;
+            document.getElementById("current-owner").textContent = FinalOwner;
+            document.getElementById("auction-lastOwner").textContent = FinalOwner;
+             // Вызов функции для открытия модального окна
+            
         });
 
         hubConnection.on("TimerUpdated", function (time) {

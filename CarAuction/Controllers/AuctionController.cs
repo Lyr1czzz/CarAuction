@@ -42,7 +42,10 @@ namespace CarAuction.Controllers
         public IActionResult Details()
         {
             var currentLot = GetCurrentLot();
+
             var nextLots = _db.Lots.Include(l => l.Bids)
+                    .ThenInclude(l => l.User)
+                .Include(l => l.Bids)
                 .Include(l => l.Vehicle)
                     .ThenInclude(v => v.Make) // Связь один к одному или один ко многим
                 .Include(l => l.Vehicle)
@@ -53,17 +56,15 @@ namespace CarAuction.Controllers
                     .ThenInclude(v => v.Engine) // Связь один к одному или один ко многим
                 .Include(l => l.Vehicle)
                     .ThenInclude(v => v.Images) // Связь один ко многим
-                .Include(l => l.Auction).
-                Where(l => l.AuctionId == currentLot.AuctionId && l.Id != currentLot.Id).ToList();
-
+                .Include(l => l.Auction)
+                    .Where(l => l.AuctionId == (currentLot.AuctionId != null ? currentLot.AuctionId : null) && l.Id != (currentLot.Id != null ? currentLot.Id : null)).ToList();
+            
             var viewModel = new AuctionViewModel
             {
                 CurrentLot = currentLot,
                 NextLots = nextLots,
-                CurrentBid = currentLot.Bids.Any() ? currentLot.Bids.Max(b => b.Amount) : currentLot.Vehicle.Price,
                 RemainingTime = 10 // начальное значение таймера
             };
-
             return View(viewModel);
         }
 
@@ -71,6 +72,8 @@ namespace CarAuction.Controllers
         {
             return _db.Lots
                 .Include(l => l.Bids)
+                    .ThenInclude(l => l.User)
+
                 .Include(l => l.Vehicle)
                     .ThenInclude(v => v.Make) // Связь один к одному или один ко многим
                 .Include(l => l.Vehicle)
@@ -104,7 +107,7 @@ namespace CarAuction.Controllers
             if (id == null)
             {
                 //this is for create
-                
+
                 return View(auctionVM);
             }
             else
@@ -249,7 +252,6 @@ namespace CarAuction.Controllers
         {
             public Lot CurrentLot { get; set; }
             public List<Lot> NextLots { get; set; }
-            public double CurrentBid { get; set; }
             public int RemainingTime { get; set; }
         }
     }
