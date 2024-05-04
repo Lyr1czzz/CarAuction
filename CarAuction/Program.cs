@@ -15,6 +15,7 @@ namespace eTickets
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetSection("ConnectionStrings:DefaultConnection").Value);
+                
             });
 
             builder.Services.AddIdentity<IdentityUser, IdentityRole>()

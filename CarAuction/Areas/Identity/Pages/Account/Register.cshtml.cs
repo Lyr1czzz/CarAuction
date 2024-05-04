@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CarAuction;
 using CarAuction.Models;
+using CarAuction.Utility;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -20,6 +21,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 namespace WebApplication1.Areas.Identity.Pages.Account
 {
@@ -30,7 +32,7 @@ namespace WebApplication1.Areas.Identity.Pages.Account
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
+        private readonly CarAuction.Utility.IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
 
 
@@ -39,7 +41,7 @@ namespace WebApplication1.Areas.Identity.Pages.Account
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender,
+            CarAuction.Utility.IEmailSender emailSender,
             RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
@@ -135,48 +137,31 @@ namespace WebApplication1.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, WC.AdminRole);
-                    //if (User.IsInRole(WC.AdminRole))
-                    //{
-                    //    //an admin has logged in and they try to create a new user
-                    //    await _userManager.AddToRoleAsync(user, WC.AdminRole);
+                    //await _userManager.AddToRoleAsync(user, WC.AdminRole);
+                    if (User.IsInRole(WC.AdminRole))
+                    {
+                        //an admin has logged in and they try to create a new user
+                        await _userManager.AddToRoleAsync(user, WC.AdminRole);
 
-                    //}
-                    //else
-                    //{
-                    //    await _userManager.AddToRoleAsync(user, WC.CustomerRole);
-                    //}
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, WC.CustomerRole);
+                    }
 
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                        values: new { area = "Identity", userId = userId, token },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                    }
-                    else
-                    {
-                        if (!User.IsInRole(WC.AdminRole))
-                        {
-                            await _signInManager.SignInAsync(user, isPersistent: false);
-                        }
-                        else
-                        {
-                            return RedirectToAction("Index");
-                        }
-                        return LocalRedirect(returnUrl);
-                    }
+                    await _emailSender.SendEmailAsync(Input.Email,
+                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.", token);
+                    return RedirectToAction("");
                 }
                 foreach (var error in result.Errors)
                 {
@@ -187,6 +172,8 @@ namespace WebApplication1.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
+
 
         private ApplicationUser CreateUser()
         {
