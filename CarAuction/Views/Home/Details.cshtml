@@ -17,7 +17,7 @@
 
         <div class="row">
             <div class="col-md-8 mb-3">
-                <div class="border p-3 bg-white rounded">
+                <div class="border p-3 rounded">
                     @if (Model.Vehicle.Images?.Any() == true)
                     {
                         <div id="vehicleCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -66,14 +66,14 @@
                 <br />
             </div>
             <div class="col-md-4">
-                <div class="border p-3 bg-white rounded mb-3">
+                <div class="border p-3 rounded mb-3">
                     @if (Model.ExistsInCard)
                     {
-                        <a asp-action="RemoveFromCart" asp-route-id="@Model.Vehicle.Id" class="btn btn-danger btn-lg btn-block">Remove from Cart</a>
+                        <a asp-action="RemoveFromCart" asp-route-id="@Model.Vehicle.Id" class="btn btn-danger btn-lg btn-block">Удалить из корзины</a>
                     }
                     else
                     {
-                        <button type="submit" asp-route-id="@Model.Vehicle.Id" class="btn btn-primary btn-lg btn-block">Add to Cart</button>
+                        <button type="submit" asp-route-id="@Model.Vehicle.Id" class="btn btn-primary btn-lg btn-block">Добавить в коризну</button>
                     }
                     <hr />
                     <div class="d-flex justify-content-between">

@@ -29,7 +29,7 @@ namespace WebApplication1.Areas.Identity.Pages.Account
         /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
-        public async Task<IActionResult> OnGetAsync(string userId, string token)
+        public async Task<IActionResult> OnGetAsync(string token, string userId)
         {
             if (userId == null || token == null)
             {

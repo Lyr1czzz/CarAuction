@@ -8,7 +8,7 @@
                 <div class="card-header bg-dark text-light ml-0 row container">
                     <div class="col-6">
                         <i class="fa fa-shopping-cart"></i> &nbsp; 
-                        Order Summary
+                        Оформление заказа
                     </div>
                     <div class="col-6 text-right">
                         <a class="btn btn-outline-info btn-sm">Back to Cart</a>
@@ -20,12 +20,12 @@
                             <div class="col-12 col-1g-7 pb-4">
                                 <div class="row">
                                     <h4 class="d-flex justify-content-between align-items-center mb-3">
-                                        <span class="text-info">User Details:</span>
+                                        <span class="text-info">О пользователе:</span>
                                     </h4>
                                 </div>
                                 <div class="row my-1">
                                     <div class="col-3">
-                                        <label>Name</label>
+                                        <label>Имя</label>
                                     </div>
                                     <div class="col-9">
                                         <input asp-for="ApplicationUser.FullName" type="text" class="form-control" />
@@ -34,7 +34,7 @@
                                 </div>
                                 <div class="row my-1">
                                     <div class="col-3">
-                                        <label>Phone</label>
+                                        <label>Номер телефона</label>
                                     </div>
                                     <div class="col-9">
                                         <input asp-for="ApplicationUser.PhoneNumber" type="text" class="form-control" />
@@ -43,7 +43,7 @@
                                 </div>
                                 <div class="row my-1">
                                     <div class="col-3">
-                                        <label>Email</label>
+                                        <label>Почта</label>
                                     </div>
                                     <div class="col-9">
                                         <input asp-for="ApplicationUser.Email" type="text" class="form-control" />
@@ -54,7 +54,7 @@
                             <div class="col-12 col-lg-5 row">
                                 <div class="col-12">
                                     <h4 class="d-flex justify-content-between align-items-center mb-3">
-                                        <span class="text-info">Summary:</span>
+                                        <span class="text-info">Позиции:</span>
                                     </h4>
                                     <ul class="list-group mb-3">
                                         @foreach (var item in Model.Vehicles)
@@ -75,7 +75,7 @@
                 <div class="card-footer">
                     <div class="row">
                         <div class="col-12 col-md-5 offset-md-7">
-                            <button type="submit" class="btn btn-primary form-control">Submit Inquiry</button>
+                            <button type="submit" class="btn btn-primary form-control">Заказать</button>
                         </div>
                     </div>
                 </div>

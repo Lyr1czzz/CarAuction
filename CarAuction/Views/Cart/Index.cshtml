@@ -1,104 +1,4 @@
 ﻿@model List<Vehicle>
-
-<style>
-    .noitem-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-
-    .card {
-        border-radius: 5px;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        margin-top: 50px;
-    }
-
-    .card-header {
-        background-color: #343a40;
-        color: #fff;
-        border-radius: 5px 5px 0 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 20px;
-    }
-
-    .card-body {
-        padding: 20px;
-    }
-
-    .product-details {
-        color: #821f3d;
-        display: flex;
-        align-items: flex-start;
-        margin-bottom: 10px;
-        color: #000;
-    }
-
-    .product-image {
-        max-width: 150px;
-        height: auto;
-        object-fit: contain;
-        border-radius: 5px;
-        border: 1px solid #bbb;
-        margin-right: 20px;
-    }
-
-    .product-info {
-        margin-right: 20px;
-        flex-grow: 1;
-        color: #000;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .product-name {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 5px;
-        color: #000;
-    }
-
-    .product-mileage {
-        font-size: 12px;
-    }
-
-    .product-price {
-        font-size: 17px;
-        text-align: right;
-    }
-
-    .remove-button {
-        color: #dc3545;
-        border: none;
-        background: none;
-        cursor: pointer;
-        font-size: 20px;
-        margin-left: auto;
-    }
-
-    .continue-button {
-        color: #fff;
-        background-color: #28a745;
-        border-color: #28a745;
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        font-weight: bold;
-        border-radius: 5px;
-        text-align: center;
-        cursor: pointer;
-    }
-
-        .continue-button:hover {
-            background-color: #218838;
-            border-color: #1e7e34;
-        }
-</style>
-
 @if (Model.Count() > 0)
 {
     <form method="post">
@@ -107,42 +7,34 @@
         </div>
         <div class="container">
             <div class="card">
-                <div class="card-header">
-                    <div>
-                        <i class="fa fa-shopping-cart"></i>
-                        Shopping Cart
-                    </div>
+                <div class="card-header bg-dark text-white">
+                    <i class="fa fa-shopping-cart"></i> Корзина
                 </div>
                 <div class="card-body">
                     @foreach (var item in Model)
                     {
-                        <div class="product-details">
-                            <div>
-                                <img src="@Url.Content(@item.Images.FirstOrDefault()?.ImagePath ?? "путь_к_изображению_заполнителю")" class="product-image" />
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="me-3">
+                                <img src="@Url.Content(@item.Images.FirstOrDefault()?.ImagePath ?? "путь_к_изображению_заполнителю")" class="img-fluid rounded" style="max-width: 150px;" />
                             </div>
-                            <div class="product-info">
-                                <div>
-                                    <div class="product-name">@item.Year @item.Make.Name @item.Model.Name @item.Series.Name</div>
-                                    <div class="product-price">@((item.Price).ToString("c"))</div>
-                                    <div class="product-mileage">Mileage: @item.Odometer</div>
-                                </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold">@item.Year @item.Make.Name @item.Model.Name @item.Series.Name</div>
+                                <div>@((item.Price).ToString("c"))</div>
+                                <div>Пробег: @item.Odometer</div>
                             </div>
                             <div>
-                                <button type="submit" asp-action="Remove" asp-route-id="@item.Id" class="remove-button">
+                                <button type="submit" asp-action="Remove" asp-route-id="@item.Id" class="btn btn-outline-danger">
+                                    Удалить
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </div>
                     }
                 </div>
-                <div class="card-footer">
-                    <div class="row">
-                        <div class="col-md-3 offset-md-9">
-                            <button type="submit" class="continue-button">
-                                <span>Continue</span>
-                            </button>
-                        </div>
-                    </div>
+                <div class="card-footer text-end">
+                    <button type="submit" class="btn btn-success">
+                        Продолжить
+                    </button>
                 </div>
             </div>
         </div>
@@ -150,8 +42,8 @@
 }
 else
 {
-    <div class="noitem-container">
-        <img src="@Url.Content("../../Files/WC/nocart.png")" width="250px" />
-        <h4>Please add items to cart...</h4>
+    <div class="d-flex flex-column align-items-center justify-content-center vh-100">
+        <img src="@Url.Content("../../Files/WC/nocart.png")" width="250px" class="img-fluid" />
+        <h4 class="mt-4">Тут пока ничего нема...</h4>
     </div>
 }
